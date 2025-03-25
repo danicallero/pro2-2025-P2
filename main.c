@@ -16,6 +16,21 @@
 
 #define MAX_BUFFER 255
 
+
+/*   Especificación:
+*
+*   Objetivo: transforma un valor enum a una cadena de caracteres.
+*   Entrada: enum (nintendo o sega)
+*   Salida: string (nintendo o entrega)
+*   Nota: si se le mete cualquier entrada de marca no conocida devolverá "unknown"
+*/
+const char *consoleBrand2String(tConsoleBrand brand) {
+    switch (brand) {
+        case nintendo: return "nintendo";
+        case sega: return "sega";
+        default: return "unknown";
+    }
+}
 /*Especificación:
  * Objetivo, transformar de forma segura un string a float.
  * Entrada: string
@@ -93,6 +108,37 @@ void processNewCommand(char *commandNumber, char *param1, char *param2, char *pa
         printf("+ Error: New not possible\n"); //TAD falló (returned false)
 }
 
+/* Especificación:
+ * Objetivo: Procesa el comando 'D' para eliminar una consola de la lista.
+ * Entradas:
+ *   - commandNumber: número de comando
+ *   - param1: consoleId a eliminar
+ *   - list: lista en la que buscar y eliminar el elemento
+ *
+ * PostCD: imprime el resultado y modifica la lista si el comando es válido.
+ * Imprime Error si el elemento no se encuentra.
+ */
+void processDeleteCommand(char *commandNumber, char *param1, tList *list) {
+    printf("********************\n");
+    printf("%s D: console %s\n", commandNumber, param1);
+
+    tPosL pos = findItem(param1, *list);
+    if (pos == LNULL) {
+        printf("+ Error: Delete not possible\n"); //cannot delete an invalid item
+        return;
+    }
+    tItemL *item = &pos->data; //accedemos a memoria para poder vaciar el stack directamente
+
+    while (!isEmptyStack(item->bidStack)) { //vaciamos el stack
+        pop(&item->bidStack);
+    }
+
+    //tenemos que imprimir antes de eliminar porque ahora item se modifica accediendo a su dirección de memoria (no es copia local) para permitir el vaciado del stack de forma directa
+    printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item->consoleId, item->seller, consoleBrand2String(item->consoleBrand), item->consolePrice, item->bidCounter);
+
+    deleteAtPosition(pos, list);
+}
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -100,6 +146,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             processNewCommand(commandNumber, param1, param2, param3, param4, list);
             break;
         case 'D':
+            processDeleteCommand(commandNumber, param1, list);
             break;
         case 'B':
             break;
