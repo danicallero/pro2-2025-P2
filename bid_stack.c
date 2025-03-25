@@ -35,6 +35,6 @@ void pop(tStack *S){
     S->top--;
 }
 
-tItemS peak(tStack S){
+tItemS peek(tStack S){
     return S.data[S.top];
 }
