@@ -6,6 +6,7 @@ script.sh
 script_custom.sh
 test_bid_stack
 test_console_list
+main
 test_bid_stack.c
 test_console_list.c
 .DS_Store
