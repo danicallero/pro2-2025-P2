@@ -10,3 +10,4 @@ main
 test_bid_stack.c
 test_console_list.c
 .DS_Store
+.idea/
