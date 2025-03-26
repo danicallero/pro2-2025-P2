@@ -1,10 +1,10 @@
 /*
- * TITLE: PROGRAMMING II LABS
+* TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
- * AUTHOR 1: ***************************** LOGIN 1: **********
+ * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
  * AUTHOR 2: ***************************** LOGIN 2: **********
- * GROUP: *.*
- * DATE: ** / ** / **
+ * GROUP: 3.3
+ * DATE: 25 / 03 / 25
  */
 
 #ifndef BID_STACK_H

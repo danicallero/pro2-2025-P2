@@ -1,0 +1,34 @@
+6c89b8d - Daniel Callero, 2025-03-26 10:52:05 : Added processInvalidateBids
+* Implemented invalidate command logic. Specification is missing, as well as some kind of optimization.
+
+* fixed Award print structure to adhere to requirements
+
+131240b - Daniel Callero, 2025-03-26 10:39:49 : Added processRemove
+Implemented process Remove command logic. It could use a minor tweak in design, and specification is pending.
+
+7864315 - Daniel Callero, 2025-03-26 10:15:56 : Added processStats
+Revised from P1, incorporating compatibility with the new bid stack. This function is provisional and desperately needs optimization and readability improvements.
+
+d260415 - Daniel Callero, 2025-03-26 09:46:50 : Added processAward
+Implemented award command logic. Additionally, I separated the deletion logic from processDelete to facilitate its reuse in this operation.
+
+400745b - Daniel Callero, 2025-03-26 09:08:12 : Added processBid
+Revised from P1, incorporating compatibility with the new bid stack. This function is provisional and desperately needs optimization and readability improvements.
+
+242a352 - Daniel Callero, 2025-03-25 22:56:44 : Added processDelete
+Revised from P1, incorporating compatibility with the new bid stack. Now item is handled trough direct memory management to be able to clear bid stack from the code; due to that, printing now has to occur before deletion to ensure we don't try to access freed memory (item is no longer a local copy). Aside from those lines, this function is virtually the same.
+
+51505de - Daniel Callero, 2025-03-25 22:56:32 : Update .gitignore
+
+c90c827 - Daniel Callero, 2025-03-25 22:35:53 : Update .gitignore
+
+aa2fae1 - Daniel Callero, 2025-03-25 22:32:28 : hotfix:typo
+Fixed typo in peek function name. Oops...
+
+0f9167e - Daniel Callero, 2025-03-25 22:31:00 : Update to gitignore
+
+bbedd1f - Daniel Callero, 2025-03-25 22:15:02 : Added processNew
+Revised from P1, incorporating compatibility with the new bid stack. Aside from that one line, this function is virtually the same.
+
+f3a7a9b - Daniel Callero, 2025-03-24 21:11:17 : Initial commit
+Added file templates and ADT specifications with their implementations (dynamic for consoles static for bids)
