@@ -46,6 +46,17 @@ float safeStr2float(const char *str) {
     return value;
 }
 
+//todo especificación de fc
+void handleDeleteConsole(tPosL pos, tList *list) {
+    tItemL *item = &pos->data;
+
+    while (!isEmptyStack(item->bidStack)) {
+        pop(&item->bidStack);
+    }
+
+    deleteAtPosition(pos, list);
+}
+
 
 /* Especificación:
  * Objetivo: Procesa el comando 'N' para añadir una nueva consola a la lista.
@@ -129,14 +140,10 @@ void processDeleteCommand(char *commandNumber, char *param1, tList *list) {
     }
     tItemL *item = &pos->data; //accedemos a memoria para poder vaciar el stack directamente
 
-    while (!isEmptyStack(item->bidStack)) { //vaciamos el stack
-        pop(&item->bidStack);
-    }
-
     //tenemos que imprimir antes de eliminar porque ahora item se modifica accediendo a su dirección de memoria (no es copia local) para permitir el vaciado del stack de forma directa
     printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item->consoleId, item->seller, consoleBrand2String(item->consoleBrand), item->consolePrice, item->bidCounter);
 
-    deleteAtPosition(pos, list);
+    handleDeleteConsole(pos, list);
 }
 
 /* Especificación:
@@ -209,6 +216,24 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
     printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n", item.consoleId, stackItem.bidder, consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
 }
 
+//todo especificación de fc
+void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
+    tPosL pos = findItem(param1, *list);
+    tItemS top;
+    if (pos == LNULL) {
+        printf("+ Error: Award not possible\n"); //cannot delete an invalid item
+        return;
+    }
+    tItemL *item = &pos->data;
+    if (isEmptyStack(item->bidStack)) {
+        printf("+ Error: Award not possible\n");
+    } else {
+        top = peek(item->bidStack);
+        printf("+ Award: console %s bidder %s brand %s price %.2f\n", item->consoleId, top.bidder, consoleBrand2String(item->consoleBrand) ,top.consolePrice);
+        handleDeleteConsole(pos, list);
+    }
+}
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -222,6 +247,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             processBidCommand(commandNumber, param1, param2, param3, list);
             break;
         case 'A':
+            processAwardCommand(commandNumber, param1, list);
             break;
         case 'R':
             break;
