@@ -46,15 +46,32 @@ float safeStr2float(const char *str) {
     return value;
 }
 
+//todo especificar
+void clearStack(tStack *stack) {
+    while (!isEmptyStack(*stack)) {
+        pop(stack);
+    }
+}
+
 //todo especificación de fc
 void handleDeleteConsole(tPosL pos, tList *list) {
     tItemL *item = &pos->data;
 
-    while (!isEmptyStack(item->bidStack)) {
-        pop(&item->bidStack);
-    }
+    clearStack(&item->bidStack);
 
     deleteAtPosition(pos, list);
+}
+
+//todo especificar
+void safeStrCpy(char *dest, const char *src, size_t size, char *label) {
+    if (dest == NULL || src == NULL || size == 0) {
+        printf("+ Error: missing parameters for: %s\n", label);
+    } else if (strlen(src) >= size) {
+        printf("+ Error: Invalid string size for parameter: %s\n", label);
+    } else {
+        strncpy(dest, src, size - 1);
+        dest[size - 1] = '\0';
+    }
 }
 
 
@@ -93,20 +110,13 @@ void processNewCommand(char *commandNumber, char *param1, char *param2, char *pa
         return;
     }
 
-    if (param1 == NULL || strlen(param1) >= NAME_LENGTH_LIMIT) { //verificamos que los strings se ajustan a los tamaños máximos
-        printf("+ Error: Invalid console ID\n");
-        return;
-    }
     if (param2 == NULL || strlen(param2) >= NAME_LENGTH_LIMIT) { //verificamos que los strings se ajustan a los tamaños máximos
         printf("+ Error: Invalid seller ID\n");
         return;
     }
 
-    strncpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT - 1);
-    newItem.consoleId[NAME_LENGTH_LIMIT - 1] = '\0'; // aseguramos la terminación como fin de cadena de caracteres just in case
-
-    strncpy(newItem.seller, param2, NAME_LENGTH_LIMIT - 1);
-    newItem.seller[NAME_LENGTH_LIMIT - 1] = '\0'; // aseguramos la terminación como fin de cadena de caracteres
+    safeStrCpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT, 'ConsoleId');
+    safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, 'SellerId');
 
     newItem.consoleBrand = (strcmp(param3, "sega") == 0) ? sega : nintendo; //pasamos de string a enum, solo lo hacemos una vez->no se justifica fc auxiliar
     newItem.consolePrice = param4Float;
@@ -170,7 +180,7 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
     printf("%s B: console %s bidder %s price %.2f\n", commandNumber, param1, param2, bidPrice);
 
     if (bidPrice < 0) { // error
-        printf("+ Error: Invalid price value\n");
+        printf("+ Error: Bid not possible\n");
         return;
     }
 
@@ -368,9 +378,7 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
         tItemL item = getItem(pos, *list);
 
         if ((float)item.bidCounter > range) {
-            while (!isEmptyStack(item.bidStack)) {
-                pop(&item.bidStack);
-            }
+            clearStack(&item.bidStack);
 
             printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n", item.consoleId, item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter, averageBids);
             item.bidCounter = 0;
