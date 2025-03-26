@@ -218,6 +218,8 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
 
 //todo especificación de fc
 void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
+    printf("********************\n");
+    printf("%s A: console %s\n", commandNumber, param1);
     tPosL pos = findItem(param1, *list);
     tItemS top;
     if (pos == LNULL) {
@@ -229,7 +231,7 @@ void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
         printf("+ Error: Award not possible\n");
     } else {
         top = peek(item->bidStack);
-        printf("+ Award: console %s bidder %s brand %s price %.2f\n", item->consoleId, top.bidder, consoleBrand2String(item->consoleBrand) ,top.consolePrice);
+        printf("* Award: console %s bidder %s brand %s price %.2f\n", item->consoleId, top.bidder, consoleBrand2String(item->consoleBrand) ,top.consolePrice);
         handleDeleteConsole(pos, list);
     }
 }
@@ -334,6 +336,57 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     }
 }
 
+//todo especificar
+void processInvalidateBidsCommand(char *commandNumber, tList *list) {
+    printf("********************\n");
+    printf("%s I\n", commandNumber);
+
+    if (isEmptyList(*list)) {
+        printf("+ Error: InvalidateBids not possible\n");
+        return;
+    }
+
+    int totalBids = 0, numConsoles = 0;
+    tPosL pos = first(*list);
+
+    //atravesamos para #pujas #consolas
+    while (pos != LNULL) {
+        tItemL item = getItem(pos, *list);
+        totalBids += item.bidCounter;
+        numConsoles++;
+        pos = next(pos, *list);
+    }
+
+    float averageBids = (float)totalBids / (float)numConsoles;
+    float range = 2 * averageBids;
+    bool invalidated = false;
+
+    pos = first(*list);
+
+    //atravesamos la lista y eliminamos las pujas si se supera el rango
+    while (pos != LNULL) {
+        tItemL item = getItem(pos, *list);
+
+        if ((float)item.bidCounter > range) {
+            while (!isEmptyStack(item.bidStack)) {
+                pop(&item.bidStack);
+            }
+
+            printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n", item.consoleId, item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter, averageBids);
+            item.bidCounter = 0;
+            updateItem(item,pos,list);
+            invalidated = true;
+        }
+
+        pos = next(pos, *list);
+    }
+
+    if (!invalidated) {
+        printf("+ Error: InvalidateBids not possible\n"); // Ninguna consola fue invalida
+    }
+}
+
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -356,6 +409,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             processStatsCommand(commandNumber, list);
             break;
         case 'I':
+            processInvalidateBidsCommand(commandNumber, list);
             break;
         default:
             break;
