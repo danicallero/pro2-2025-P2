@@ -139,6 +139,76 @@ void processDeleteCommand(char *commandNumber, char *param1, tList *list) {
     deleteAtPosition(pos, list);
 }
 
+/* Especificación:
+ * Objetivo: Procesa el comando 'B' para realizar una puja sobre una consola existente.
+ * Entradas:
+ *   - commandNumber: número de comando
+ *   - param1: consoleId de la consola a pujar
+ *   - param2: nombre del pujador
+ *   - param3: precio de la puja (string)
+ *   - list: lista donde se actualiza la consola
+ *
+ * PostCD: imprime el resultado y actualiza el precio y contador de pujas si es válido.
+ * Nota: Imprime Error si la consola no existe, el pujador es el vendedor o el precio es menor o igual al actual.
+ */
+void processBidCommand(char *commandNumber, char *param1, char *param2, char *param3, tList *list) {
+    tPosL pos; //posición del item sobre el que pujar.
+    tItemL item; //item sobre el que se puja
+    tItemS stackItem;
+
+    printf("********************\n");
+
+    float bidPrice = safeStr2float(param3); //variable precio como float para poder pasarlo al TAD.
+
+    printf("%s B: console %s bidder %s price %.2f\n", commandNumber, param1, param2, bidPrice);
+
+    if (bidPrice < 0) { // error
+        printf("+ Error: Invalid price value\n");
+        return;
+    }
+
+    pos = findItem(param1, *list);
+    if (pos == LNULL) {
+        printf("+ Error: Bid not possible\n"); //no se ha encontrado el item en la lista, no se puede pujar.
+        return;
+    }
+
+    item = getItem(pos, *list);
+    if (strcmp(item.seller, param2) == 0) {
+        printf("+ Error: Bid not possible\n"); //vendedor del item cannot bid en su propio objeto (inflar su puja)
+        return;
+    }
+
+    if (param2 == NULL || strlen(param2) >= NAME_LENGTH_LIMIT) { //verificamos que los strings se ajustan a los tamaños máximos
+        printf("+ Error: Invalid bidder ID\n");
+        return;
+    }
+
+    if (!isEmptyStack(item.bidStack)) { //segunda condición solo se debería comprobar si la primera es cierta
+        if (bidPrice <= peek(item.bidStack).consolePrice) {
+            printf("+ Error: Bid not possible\n"); //no se puede pujar un valor inferior o igual al actual
+            return;
+        }
+    } else {
+        if (bidPrice <= item.consolePrice) {
+            printf("+ Error: Bid not possible\n"); //no se puede pujar un valor inferior o igual al actual
+            return;
+        }
+    }
+
+    strncpy(stackItem.bidder, param2, NAME_LENGTH_LIMIT - 1);
+    stackItem.bidder[NAME_LENGTH_LIMIT - 1] = '\0'; // aseguramos la terminación como fin de cadena de caracteres
+    stackItem.consolePrice = bidPrice;
+
+    if (push(stackItem, &item.bidStack)) {
+        item.bidCounter++;
+    }
+
+    updateItem(item, pos, list);
+
+    printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n", item.consoleId, stackItem.bidder, consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
+}
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -149,6 +219,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             processDeleteCommand(commandNumber, param1, list);
             break;
         case 'B':
+            processBidCommand(commandNumber, param1, param2, param3, list);
             break;
         case 'A':
             break;
