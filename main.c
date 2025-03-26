@@ -234,6 +234,75 @@ void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
     }
 }
 
+/* Especificación:
+ * Objetivo: Procesa el comando 'S' para mostrar estadísticas y listing de las consolas registradas.
+ * Entradas:
+ *   - commandNumber: número de comando
+ *   - list: lista sobre la que se calculan las estadísticas
+ *
+ * PostCD: imprime el número total de consolas, la suma de precios y el precio promedio por marca.
+ * Nota: Imprime Error si la lista está vacía.
+ */
+void processStatsCommand(char *commandNumber, tList *list) {
+    printf("********************\n");
+    printf("%s S\n", commandNumber);
+
+    if (isEmptyList(*list)) {
+        printf("+ Error: Stats not possible\n"); //list is empty
+        return;
+    }
+
+    int countNintendo = 0, countSega = 0;       //inicializamos contadores
+    float sumNintendo = 0.0f, sumSega = 0.0f;
+
+    tPosL topItemPos = NULL;
+    float maxIncrease = 0.0f;
+    tPosL pos = first(*list);
+    while (pos != LNULL) { //atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y hacer el listing de todas en consola.
+        tItemL item = getItem(pos, *list);
+
+        printf("Console %s seller %s brand %s price %.2f", item.consoleId, item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice);
+
+        if (isEmptyStack(item.bidStack)) {
+            printf(". No bids\n");
+        } else {
+            float topBid = peek(item.bidStack).consolePrice;
+            float increase = ((topBid - item.consolePrice) / item.consolePrice) * 100.0f;
+
+            if (increase > maxIncrease) {
+                maxIncrease = increase;
+                topItemPos = pos;
+            }
+            printf(" bids %d top bidder %s\n", item.bidCounter, peek(item.bidStack).bidder);
+        }
+
+
+        if (item.consoleBrand == nintendo) { //aumentamos contador y sumamos contador para contador y promedio
+            countNintendo++;
+            sumNintendo += item.consolePrice;
+        } else if (item.consoleBrand == sega) {
+            countSega++;
+            sumSega += item.consolePrice;
+        }
+
+        pos = next(pos, *list);
+    }
+
+    float avgNintendo = (countNintendo > 0) ? sumNintendo / (float)countNintendo : 0; //cálculo de promedios, si no hay nada marcamos 0.
+    float avgSega = (countSega > 0) ? sumSega / (float)countSega : 0;
+
+    printf("Brand     Consoles    Price  Average\n");
+    printf("Nintendo  %8d %8.2f %8.2f\n", countNintendo, sumNintendo, avgNintendo);
+    printf("Sega      %8d %8.2f %8.2f\n", countSega, sumSega, avgSega);
+
+    if (topItemPos != NULL) {
+        tItemL topItem = getItem(topItemPos, *list);
+        printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n", topItem.consoleId, topItem.seller, consoleBrand2String(topItem.consoleBrand), topItem.consolePrice, peek(topItem.bidStack).bidder, peek(topItem.bidStack).consolePrice, maxIncrease);
+    } else {
+        printf("Top bid not possible\n");
+    }
+}
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -252,6 +321,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
         case 'R':
             break;
         case 'S':
+            processStatsCommand(commandNumber, list);
             break;
         case 'I':
             break;
