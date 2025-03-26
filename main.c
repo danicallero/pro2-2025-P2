@@ -242,7 +242,7 @@ void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
  *
  * PostCD: imprime el número total de consolas, la suma de precios y el precio promedio por marca.
  * Nota: Imprime Error si la lista está vacía.
- */
+ */ //todo especificar
 void processStatsCommand(char *commandNumber, tList *list) {
     printf("********************\n");
     printf("%s S\n", commandNumber);
@@ -303,6 +303,37 @@ void processStatsCommand(char *commandNumber, tList *list) {
     }
 }
 
+//todo especificar
+void processRemoveCommand(char *commandNumber, tList *list) {
+    bool removed = false;
+
+    printf("********************\n");
+    printf("%s R\n", commandNumber);
+
+    if (isEmptyList(*list)) {
+        printf("+ Error: Remove not possible\n"); //list is empty
+        return;
+    }
+
+    tPosL pos = first(*list);
+    while (pos != LNULL) { //atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y hacer el listing de todas en consola.
+        tItemL item = getItem(pos, *list);
+        tPosL nextPos = next(pos, *list);
+
+        if (isEmptyStack(item.bidStack)) {
+            removed = true;
+            printf("Removing console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
+            handleDeleteConsole(pos, list);
+        }
+
+        pos = nextPos;//si accedemos tenemos bad access
+    }
+
+    if (!removed) {
+        printf("* Error: Remove not possible\n");
+    }
+}
+
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
 
     switch (command) {
@@ -319,6 +350,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             processAwardCommand(commandNumber, param1, list);
             break;
         case 'R':
+            processRemoveCommand(commandNumber,list);
             break;
         case 'S':
             processStatsCommand(commandNumber, list);
