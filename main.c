@@ -115,8 +115,8 @@ void processNewCommand(char *commandNumber, char *param1, char *param2, char *pa
         return;
     }
 
-    safeStrCpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT, 'ConsoleId');
-    safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, 'SellerId');
+    safeStrCpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT, "ConsoleId");
+    safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, "SellerId");
 
     newItem.consoleBrand = (strcmp(param3, "sega") == 0) ? sega : nintendo; //pasamos de string a enum, solo lo hacemos una vez->no se justifica fc auxiliar
     newItem.consolePrice = param4Float;
