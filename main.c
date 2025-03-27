@@ -8,7 +8,6 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "types.h"
@@ -179,40 +178,36 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
     tPosL pos; //posición del item sobre el que pujar.
     tItemL item; //item sobre el que se puja
     tItemS stackItem;
+    bool error = false;
+    float highestBid;
     float bidPrice = safeStr2float(param3); //variable precio como float para poder pasarlo al TAD.
 
     printf("********************\n");
     printf("%s B: console %s bidder %s price %.2f\n", commandNumber, param1, param2, bidPrice);
 
-    if (bidPrice < 0) { //error en conversión (o han metido un precio negativo). Salimos ya porque con esto no podemos trabajar
+    if (bidPrice < 0 || isEmptyList(*list)) { //error en conversión (o han metido un precio negativo). Salimos ya porque con esto no podemos trabajar
+        error = true;
+    } else {
+        pos = findItem(param1, *list);
+        if (pos == LNULL) { //no se ha encontrado item (también verifica que no esté vacía, pero hay que meter redundancia porque lo pide la clase...)
+            error = true;
+        } else {
+            item = getItem(pos, *list);
+            if (strcmp(item.seller, param2) == 0) { //el vendedor de un item no puede pujar en su propio item //todo controlar también el pujador actual
+                error = true;
+            } else {
+                highestBid = isEmptyStack(item.bidStack)?item.consolePrice:peek(item.bidStack).consolePrice;
+                if (bidPrice <= highestBid) { //la puja debe ser válida
+                    error = true;
+                }
+            }
+        }
+    }
+
+    if (error) { //unificamos errores
         printf("+ Error: Bid not possible\n");
         return;
     }
-
-    if (isEmptyList(*list)) { //totalmente innecesario, porque finditem devuelve LNULL con lista vacía, y lo hace en O(1), pero la redundancia es necesaria para adherirnos a los criterios de evaluación
-        printf("+ Error: Delete not possible\n");
-        return;
-    }
-
-    pos = findItem(param1, *list);
-    if (pos == LNULL) {
-        printf("+ Error: Bid not possible\n"); //no se ha encontrado el item en la lista, no se puede pujar.
-        return;
-    }
-
-    item = getItem(pos, *list);
-    if (strcmp(item.seller, param2) == 0) {
-        printf("+ Error: Bid not possible\n"); //vendedor del item cannot bid en su propio objeto (inflar su puja)
-        return;
-    }
-
-    float highestBid = isEmptyStack(item.bidStack)?item.consolePrice:peek(item.bidStack).consolePrice;
-
-
-        if (bidPrice <= highestBid) {
-            printf("+ Error: Bid not possible\n"); //no se puede pujar un valor inferior o igual al actual
-            return;
-        }
 
 
     if (!safeStrCpy(stackItem.bidder, param2, NAME_LENGTH_LIMIT, "BidderId")) return;
