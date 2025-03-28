@@ -30,6 +30,44 @@ const char *consoleBrand2String(tConsoleBrand brand) {
         default: return "unknown";
     }
 }
+
+/*   Especificación:
+*   Objetivo: transforma las mayúsculas de una cadena de caracteres a minúsculas.
+*   Entrada:
+*    - str: puntero a string
+*   PreCD: str debe ser un puntero válido que apunte a un string existente
+*   PosCD: str ahora no tiene mayúsculas.
+*/
+void toLower(char *str) {
+    for (; *str; str++) {
+        if (*str >= 'A' && *str <= 'Z') { //Solo converimos de la A a la Z, minúsculas y otros chars quedan tal cual
+            *str += 'a' - 'A'; //convertimos con ASCII
+        }
+    }
+}
+
+/*   Especificación:
+*   Objetivo: transforma una cadena de caracteres a un valor enum.
+*   Entrada:
+*    - source: string
+*    - dest: puntero de la variable donde vamos a guardar el enum
+*   Salida: true si la marca existe en el enum tconsolebrand, false si no.
+*/
+bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
+    bool out = false;
+    toLower(source);
+    if (strcmp(source, "nintendo") == 0) {
+        *dest = nintendo;
+        out = true;
+    }
+    if (strcmp(source, "sega") == 0) {
+        *dest = sega;
+        out = true;
+    }
+    if (!out) printf("+ Error: Console brand \"%s\" is not among expected brands.\n", source);
+    return out; //error flag
+}
+
 /*Especificación:
  * Objetivo, transformar de forma segura un string a float.
  * Entrada: string
@@ -45,27 +83,46 @@ float safeStr2float(const char *str) {
     return value;
 }
 
-//todo especificar
+/*Especificación
+ * Objetivo: vaciar los contenidos de un stack
+ * Entrada: Stack
+ * PreCD: El stack debe estar inicializado
+ * PosCD: El stack queda vaciado
+ */
 void clearStack(tStack *stack) {
     while (!isEmptyStack(*stack)) {
         pop(stack);
     }
 }
 
-//todo especificación de fc
+/*Especificación
+ * Objetivo: gestionar la eliminación de consolas
+ * Entradas:
+ *  -pos: posición del elemento a eliminar
+ *  -list: lista en la que eliminaremos el item
+ * PreCD: la lista debe estar inicializada, la posición del elemento a eliminar es válida
+ * PosCD: los elementos de la lista pueden haber cambiado de orden
+ */
 void handleDeleteConsole(tPosL pos, tList *list) {
     if (pos == NULL) {
         printf("+ Error: Delete not possible.\n");
         return;
     }
-    tItemL *item = &pos->data;
 
-    clearStack(&item->bidStack);
+    clearStack(&pos->data.bidStack);
 
     deleteAtPosition(pos, list);
 }
 
-//todo especificar
+/*Especificación
+ * Objetivo: Copiar de manera un string a un destino, asegurando que no haya overflow o errores
+ * Entradas:
+ *  - dest: string de destino
+ *  - src: string de origen
+ *  - size: tamaño máximo, incluyendo null termination del string de destino
+ *  - label: identificador para los errores
+ * Salida: true en caso de q
+ */
 bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
     bool out = false;
     if (dest == NULL || src == NULL || size == 0) {
@@ -98,6 +155,7 @@ bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
 void processNewCommand(char *commandNumber, char *param1, char *param2, char *param3, char *param4, tList *list) {
     tItemL newItem; //item a insertar
     tPosL pos; //posición del nuevo item
+    tConsoleBrand brand; //variable donde guardamos la conversión de string a enum, lo usamos para añadir verificación
     float param4Float = safeStr2float(param4); //variable precio como float para poder pasarlo al TAD.
 
     printf("********************\n");
@@ -117,9 +175,17 @@ void processNewCommand(char *commandNumber, char *param1, char *param2, char *pa
     }
 
     if (!safeStrCpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT, "ConsoleId") ||
-        !safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, "SellerId")) return;
+        !safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, "SellerId")) {
+        printf("+ Error: New not possible\n"); //string assign failed
+        return;
+    }
 
-    newItem.consoleBrand = (strcmp(param3, "sega") == 0) ? sega : nintendo; //pasamos de string a enum, solo lo hacemos una vez->no se justifica fc auxiliar
+    if (!string2ConsoleBrand(param3, &brand)) {
+        printf("+ Error: New not possible\n"); //invalid brand
+        return;
+    }
+
+    newItem.consoleBrand = brand;
     newItem.consolePrice = param4Float;
     newItem.bidCounter = 0;
     createEmptyStack(&newItem.bidStack); //inicializamos el stack vacío
