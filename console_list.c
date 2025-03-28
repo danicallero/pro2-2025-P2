@@ -103,7 +103,7 @@ void updateItem(tItemL d, tPosL p, tList *L) {
 
 tPosL findItem(tConsoleId id, tList L) {//l sigue siendo puntero. Como una lista vacía tiene L==LNULL, la fc también acepta listas vacías, ya que devolverá null tras el primer intento
     tPosL p;
-    for (p = L; p != LNULL; p = p->next) { //atravesamos hasta encontrar un match. en el peor de los casos la fc es O(n)
+    for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) { //atravesamos hasta encontrar un match, o consoleId es mayor que el pasado. en el peor de los casos la fc es O(n)
         if (strcmp(p->data.consoleId, id) == 0) return p;
     }
     return LNULL;

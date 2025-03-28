@@ -66,12 +66,9 @@ bool insertItem(tItemL d, tList *L);
  * Objetivo: Inserta un elemento en la lista manteniendo el orden
  * Entradas:
  *   - d: elemento a insertar (tItemL).
- *   - p: posición en la lista donde se insertará (tPosL) o LNULL.
  *   - L: puntero a la lista.
  * Salidas:
  *   - True si se insertó el elemento correctamente, false en caso contrario.
- * Precondiciones:
- *   - La posición p debe ser válida o LNULL.
  * Postcondiciones:
  *   - Se incrementa el tamaño de la lista.
  *   - Los elementos posteriores a p pueden haberse desplazado.
@@ -84,7 +81,7 @@ void deleteAtPosition(tPosL p, tList *L);
  *   - p: posición del elemento a eliminar (tPosL).
  *   - L: puntero a la lista.
  * Precondiciones:
- *   - La posición p debe ser válida.
+*   - La posición p debe ser válida. y la consola en dicha posición tiene una pila de pujas vacía.
  * Postcondiciones:
  *   - Se reduce el tamaño de la lista.
  *   - Los elementos posteriores a p pueden haberse desplazado.
