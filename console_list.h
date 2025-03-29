@@ -26,7 +26,7 @@ typedef struct tItemL {
  tStack bidStack;
 } tItemL;
 
-typedef struct tNode *tPosL; //definimos tpos como puntero a tnode
+typedef struct tNode *tPosL; //definimos tPosL como puntero a tNode
 
 struct tNode{
   tItemL data;
@@ -35,8 +35,8 @@ struct tNode{
 
 typedef tPosL tList;
 /*
- * tList es un alias de tPosl, que a su vez apunta a un struct tNode. Por ello tList será puntero al primer elemento de la lista.
- * Si la lista está vacía la inicializamos apuntando a LNULL, si tiene algún elemento, éste habitará la primera pos (tList),
+ * tList es un alias de tPosL, que a su vez apunta a un struct tNode. Por ello tList será puntero al primer elemento de la lista.
+ * Si la lista está vacía la inicializamos apuntando a LNULL, si tiene algún elemento, este habitará la primera pos (tList),
  * o se insertará a continuación enlazando el nuevo nodo en la tPosL next.
  * El último nodo apunta a LNULL.
  */
@@ -71,7 +71,7 @@ bool insertItem(tItemL d, tList *L);
  *   - True si se insertó el elemento correctamente, false en caso contrario.
  * Postcondiciones:
  *   - Se incrementa el tamaño de la lista.
- *   - Los elementos posteriores a p pueden haberse desplazado.
+ *   - Los elementos en posiciones posteriores pueden haberse desplazado.
  */
 
 void deleteAtPosition(tPosL p, tList *L);
@@ -81,10 +81,10 @@ void deleteAtPosition(tPosL p, tList *L);
  *   - p: posición del elemento a eliminar (tPosL).
  *   - L: puntero a la lista.
  * Precondiciones:
-*   - La posición p debe ser válida. y la consola en dicha posición tiene una pila de pujas vacía.
+*   - La posición p debe ser válida, y la consola en dicha posición tiene una pila de pujas vacía.
  * Postcondiciones:
  *   - Se reduce el tamaño de la lista.
- *   - Los elementos posteriores a p pueden haberse desplazado.
+ *   - Los elementos posteriores a la posición 'p' pueden haberse desplazado.
  */
 
 void updateItem(tItemL d, tPosL p, tList *L);
@@ -145,7 +145,7 @@ tPosL previous(tPosL p, tList L);
  *   - p: posición actual (tPosL).
  *   - L: lista en la que buscar la posición anterior.
  * Salidas:
- *   - Posición anterior (tPosL) o LNULL si p es la primera.
+ *   - Posición anterior (tPosL) o LNULL si 'p' es la primera.
  * Precondiciones:
  *   - La posición p debe ser válida.
  */
@@ -157,7 +157,7 @@ tPosL next(tPosL p, tList L);
  *   - p: posición actual (tPosL).
  *   - L: lista en la que buscar la posición siguiente.
  * Salidas:
- *   - Posición siguiente (tPosL) o LNULL si p es la última.
+ *   - Posición siguiente (tPosL) o LNULL si 'p' es la última.
  * Precondiciones:
  *   - La posición p debe ser válida.
  */
