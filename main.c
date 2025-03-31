@@ -69,7 +69,7 @@ bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
 }
 
 /*Especificación:
- * Objetivo, transformar de forma segura un string a float.
+ * Objetivo: transformar de forma segura un string a float.
  * Entrada: string
  * Salida: el string transformado a float o -1.0f en caso de fallo en la conversión.
  */
@@ -259,11 +259,12 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
             error = true;
         } else {
             item = getItem(pos, *list);
-            if (strcmp(item.seller, param2) == 0) { //el vendedor de un item no puede pujar en su propio item //todo controlar también el pujador actual
+            if (strcmp(item.seller, param2) == 0) { //el vendedor de un item no puede pujar en su propio item
                 error = true;
             } else {
-                highestBid = isEmptyStack(item.bidStack)?item.consolePrice:peek(item.bidStack).consolePrice;
-                if (bidPrice <= highestBid) { //la puja debe ser válida
+                tItemS itemS = isEmptyStack(item.bidStack)?(tItemS){.consolePrice = -1, .bidder = ""}:peek(item.bidStack); //modificado para verificar que el pujador actual no vuelve a pujar
+                highestBid = (itemS.consolePrice == -1)?item.consolePrice:itemS.consolePrice; //Usamos valor -1 para marcar que no hay puja porque ya hemos marcado antes valores negativos como error, así que ponerlo ahora no modifica nada
+                if (bidPrice <= highestBid || strcmp(itemS.bidder, param2) == 0) { //la puja debe ser válida, tanto en precio como pujador distinto a último pujador
                     error = true;
                 }
             }
