@@ -19,8 +19,8 @@
  * de inyección.
  */
 
-void createEmptyList(tList *L) { //puntero a un puntero permite modificar el primero.
-    *L = LNULL;
+void createEmptyList(tList *L) {
+    *L = LNULL; //Se inicializa con un puntero vacío
 }
 
 //Función auxiliar para facilitar la creación de nodos
@@ -33,30 +33,33 @@ void createEmptyList(tList *L) { //puntero a un puntero permite modificar el pri
  */
 
 bool allocateNode(tPosL *p){
-    *p = malloc(sizeof(struct tNode));
+    *p = malloc(sizeof(struct tNode)); //reservamos un espacio en memoria del tamaño del nodo
     return *p != LNULL;
 }
 
-bool isEmptyList(tList L) {
+bool isEmptyList(const tList L) {
     return L == LNULL;
 }
 
-bool insertItem(tItemL d, tList *L) {
+bool insertItem(const tItemL data_d, tList *L) {
     tPosL newNode, prev = LNULL, current = *L;
+    //newNode será el nodo que insertaremos en la lista.
+    //prev es un auxiliar que mantendrá registro del nodo anterior a current.
+    //current recorrerá la lista para encontrar la posición de inserción.
     bool out = false;
 
     if (allocateNode(&newNode)) { //comprobamos al principio para no cambiar nada si hay error en memoria
 
-        newNode->data = d;
+        newNode->data = data_d;
         newNode->next = LNULL; //inicializamos como null siempre
 
         //caso 1: nuevo nodo es el menor: lista vacía (*L) o insertando al inicio
-        if (isEmptyList(*L) || strcmp(d.consoleId, (*L)->data.consoleId) < 0) {
+        if (isEmptyList(*L) || strcmp(data_d.consoleId, (*L)->data.consoleId) < 0) {
             newNode->next = *L;
             *L = newNode;
         } else {
             //caso 2: buscar la posición correcta para mantener el orden
-            while (current != LNULL && strcmp(d.consoleId, current->data.consoleId) > 0) {
+            while (current != LNULL && strcmp(data_d.consoleId, current->data.consoleId) > 0) {
                 prev = current;
                 current = current->next;
             }

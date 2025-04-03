@@ -61,7 +61,7 @@ bool isEmptyList(tList L);
  *   - Devuelve true si la lista está vacía, false en caso contrario.
  */
 
-bool insertItem(tItemL d, tList *L);
+bool insertItem(tItemL data_d, tList *L);
 /*
  * Objetivo: Inserta un elemento en la lista manteniendo el orden
  * Entradas:
