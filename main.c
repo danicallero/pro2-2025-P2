@@ -23,7 +23,7 @@
 *   Salida: string (nintendo o entrega)
 *   Nota: si se le mete cualquier entrada de marca no conocida devolverá "unknown"
 */
-const char *consoleBrand2String(tConsoleBrand brand) {
+char *consoleBrand2String(tConsoleBrand brand) {
     switch (brand) {
         case nintendo: return "nintendo";
         case sega: return "sega";
@@ -34,9 +34,10 @@ const char *consoleBrand2String(tConsoleBrand brand) {
 /*   Especificación:
 *   Objetivo: transforma las mayúsculas de una cadena de caracteres a minúsculas.
 *   Entrada:
-*    - str: puntero a string
+*    - str: puntero al string que se quiere transoformar.
 *   PreCD: str debe ser un puntero válido que apunte a un string existente
 *   PosCD: str ahora no tiene mayúsculas.
+*   Nota: esta función modifica src directamente, no devuelve un duplicado
 */
 void toLower(char *str) {
     for (; *str; str++) {
@@ -52,6 +53,8 @@ void toLower(char *str) {
 *    - source: string
 *    - dest: puntero de la variable donde vamos a guardar el enum
 *   Salida: true si la marca existe en el enum tconsolebrand, false si no.
+*   Salida por referencia: dest tomará el valor del enum correspondiente en caso de existir.
+*   PosCD: str se pasará a minúsculas al llamar a la función.
 */
 bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
     bool out = false;
@@ -59,8 +62,7 @@ bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
     if (strcmp(source, "nintendo") == 0) {
         *dest = nintendo;
         out = true;
-    }
-    if (strcmp(source, "sega") == 0) {
+    } else if (strcmp(source, "sega") == 0) {
         *dest = sega;
         out = true;
     }
@@ -104,7 +106,7 @@ void clearStack(tStack *stack) {
  * PosCD: los elementos de la lista pueden haber cambiado de orden
  */
 void handleDeleteConsole(tPosL pos, tList *list) {
-    if (pos == NULL) {
+    if (pos == LNULL) { //pos tiene que ser válida
         printf("+ Error: Delete not possible.\n");
         return;
     }
@@ -297,7 +299,14 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
     printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n", item.consoleId, stackItem.bidder, consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
 }
 
-//todo especificación de fc
+/*Especificación:
+ *  Objetivo: Procesa el comando 'A' para adjudicar una consola al mayor postor
+ *  Entradas:
+ *   - commandNumber: número de comando
+ *   - param1: consoleId de la consola a pujar
+ *   - list: lista donde se encuentra la consola
+ *   PostCD: se imprime el usuario al que se le adjudica la consola y, posteriormente, se elimina de la lista. En caso de no existir elemento o pujas se imprimirá un error.
+ */
 void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
     printf("********************\n");
     printf("%s A: console %s\n", commandNumber, param1);
@@ -329,9 +338,11 @@ void processAwardCommand(char *commandNumber, char *param1, tList *list ) {
  *   - commandNumber: número de comando
  *   - list: lista sobre la que se calculan las estadísticas
  *
- * PostCD: imprime el número total de consolas, la suma de precios y el precio promedio por marca.
+ * PostCD: Imprime una lista con todas las consolas, junto con su mayor pujador (No bids en caso de no tener ninguna).
+ * También imprime el número total de consolas, la suma de precios y el precio promedio por marca. Además, imprimirá la
+ * "Top Bid", aquella consola cuyo incremento en precio (original/puja) sea el mayor
  * Nota: Imprime Error si la lista está vacía.
- */ //todo especificar
+ */
 void processStatsCommand(char *commandNumber, tList *list) {
     printf("********************\n");
     printf("%s S\n", commandNumber);
@@ -392,7 +403,14 @@ void processStatsCommand(char *commandNumber, tList *list) {
     }
 }
 
-//todo especificar
+/* Especificación:
+ * Objetivo: Eliminar de la lista aquellas consolas que no tengan ninguna puja.
+ * Entradas:
+ *   - commandNumber: número de comando
+ *   - list: lista en la que se quiere hacer la purga.
+ * PostCD: se elimina de la lista aquellas consolas que no tengan pujas. En caso de no haber consolas, o que ninguna
+ * esté libre de pujas, se imprimirá un error; de lo contrario se imprimirá que consolas se eliminan.
+ */
 void processRemoveCommand(char *commandNumber, tList *list) {
     bool removed = false;
 
@@ -423,7 +441,15 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     }
 }
 
-//todo especificar
+/* Especificación:
+ * Objetivo: Procesa el comando 'I' para invalidar las consolas con pujas irregulares.
+ * Entradas:
+ *   - commandNumber: número de comando
+ *   - list: lista sobre la que se calculan las estadísticas
+ *
+ * PostCD: imprime el número total de consolas, la suma de precios y el precio promedio por marca.
+ * Nota: Imprime Error si la lista está vacía.
+ */
 void processInvalidateBidsCommand(char *commandNumber, tList *list) {
     printf("********************\n");
     printf("%s I\n", commandNumber);
