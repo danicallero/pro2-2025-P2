@@ -12,29 +12,29 @@
 
 /* Write your code here... */
 void createEmptyStack(tStack *S){
-    S->top = SNULL;
+    S->top = SNULL; //cuando vacía top = null
 }
 
 bool isEmptyStack(tStack S){
-    return S.top == SNULL;
+    return S.top == SNULL; //cuando vacía top = null
 }
 
 bool push(tItemS d, tStack *S){
-    bool out = false;
-    if(S->top == SMAX-1)
+    bool out = false; //output
+    if(S->top >= SMAX-1) //está la lista llena?
         out = false;
     else {
-        S->top++;
-        S->data[S->top] = d;
+        S->top++; //un valor más en la lista
+        S->data[S->top] = d; //añadimos a la cima (LIFO)
         out = true;
     }
     return out;
 }
 
 void pop(tStack *S){
-    S->top--;
+    S->top--; //top es uno menos
 }
 
 tItemS peek(tStack S){
-    return S.data[S.top];
+    return S.data[S.top]; //devolvemos top
 }
