@@ -12,13 +12,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-/* AVISO: Esta implementación sigue la exigencia de la asignatura de no realizar comprobaciones de precondición.
- * En un entorno real, validar los parámetros de entrada sería esencial para evitar comportamientos indefinidos,
- * prevenir posibles corrupciones y mejorar la robustez del código. Confiar en que el usuario siempre cumplirá las
- * precondiciones no es una buena decisión y hace que el TAD sea susceptible a errores de programación o ataques
- * de inyección.
- */
-
 void createEmptyList(tList *L) {
     *L = LNULL; //Se inicializa con un puntero vacío
 }
@@ -38,7 +31,7 @@ bool allocateNode(tPosL *p){
 }
 
 bool isEmptyList(const tList L) {
-    return L == LNULL;
+    return L == LNULL; //si la lista está vacía se tiene que haber marcado con L=LNULL
 }
 
 bool insertItem(const tItemL data_d, tList *L) {
@@ -46,7 +39,7 @@ bool insertItem(const tItemL data_d, tList *L) {
     //newNode será el nodo que insertaremos en la lista.
     //prev es un auxiliar que mantendrá registro del nodo anterior a current.
     //current recorrerá la lista para encontrar la posición de inserción.
-    bool out = false;
+    bool out = false; //output
 
     if (allocateNode(&newNode)) { //comprobamos al principio para no cambiar nada si hay error en memoria
 
@@ -75,7 +68,7 @@ bool insertItem(const tItemL data_d, tList *L) {
 
 
 void deleteAtPosition(tPosL p, tList *L) {
-    tPosL prev = *L;
+    tPosL prev = *L; //auxiliar de la lista para no modificarla (se pasa por ref.)
     if (!isEmptyList(*L) && p != LNULL) {     /* Lista vacía o posición inválida. Mejora eficiencia salir de la función
                                                * en lugar de meternos en búcles con un valor que corromperá la lista
                                                */
@@ -124,13 +117,13 @@ tPosL last(tList L) {
 }
 
 tPosL previous(tPosL p, tList L) {
-    tPosL out = LNULL;
+    tPosL out = LNULL; //output. LNULL por defecto
     if (p != L) { //si la p==L, es el primer nodo y no tiene previo
         tList prev = L;
         while (prev->next != LNULL && prev->next != p) { //atravesamos hasta encontrar un puntero cuyo siguiente sea la posición enviada, o el final.
             prev = prev->next;
         }
-        out = prev->next == p ? prev : LNULL; //si el que hemos encontrado es el previo, lo devolvemos, si no devolvemos lnull.
+        out = prev->next == p ? prev : LNULL; //si el que hemos encontrado es el previo, lo devolvemos, si no devolvemos lnull (esto solo es para reforzar integridad).
     }
     return out;
 }

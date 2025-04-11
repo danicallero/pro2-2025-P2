@@ -70,7 +70,7 @@ bool insertItem(tItemL data_d, tList *L);
  * Salidas:
  *   - True si se insertó el elemento correctamente, false en caso contrario.
  * Postcondiciones:
- *   - Se incrementa el tamaño de la lista.
+ *   - Se incrementa el tamaño de la lista y se guarda el nuevo elemento en la posición correspondiente.
  *   - Los elementos en posiciones posteriores pueden haberse desplazado.
  */
 
@@ -83,7 +83,7 @@ void deleteAtPosition(tPosL p, tList *L);
  * Precondiciones:
 *   - La posición p debe ser válida, y la consola en dicha posición tiene una pila de pujas vacía.
  * Postcondiciones:
- *   - Se reduce el tamaño de la lista.
+ *   - Se reduce el tamaño de la lista al eliminar de la misma el elemento.
  *   - Los elementos posteriores a la posición 'p' pueden haberse desplazado.
  */
 

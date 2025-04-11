@@ -31,7 +31,7 @@ char *consoleBrand2String(tConsoleBrand brand) {
     }
 }
 
-/*   Especificación:
+/*  Especificación:
 *   Objetivo: transforma las mayúsculas de una cadena de caracteres a minúsculas.
 *   Entrada:
 *    - str: puntero al string que se quiere transoformar.
@@ -47,7 +47,7 @@ void toLower(char *str) {
     }
 }
 
-/*   Especificación:
+/*  Especificación:
 *   Objetivo: transforma una cadena de caracteres a un valor enum.
 *   Entrada:
 *    - source: string
