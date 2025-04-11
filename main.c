@@ -246,42 +246,34 @@ void processBidCommand(char *commandNumber, char *param1, char *param2, char *pa
     tPosL pos; //posición del item sobre el que pujar.
     tItemL item; //item sobre el que se puja
     tItemS stackItem; //metadatos de la puja
-    bool error = false;
     float highestBid; //valor numérico de la puja más alta (si no hay pujas será el precio base)
     char *highestBidStr; //string del mayor pujador (si no hay pujas será el vendedor)
-
     float bidPrice = safeStr2float(param3); //variable precio como float para poder pasarlo al TAD.
 
     printf("********************\n");
     printf("%s B: console %s bidder %s price %.2f\n", commandNumber, param1, param2, bidPrice);
 
     if (bidPrice < 0 || isEmptyList(*list)) { //error en conversión (o han metido un precio negativo). Salimos ya porque con esto no podemos trabajar
-        error = true;
-    } else {
-        pos = findItem(param1, *list);
-        if (pos == LNULL) { //no se ha encontrado item (también verifica que no esté vacía, pero hay que meter redundancia porque lo pide la clase...)
-            error = true;
-        } else {
-            item = getItem(pos, *list);
-            stackItem = isEmptyStack(item.bidStack)?(tItemS){.consolePrice = -1, .bidder = ""}:peek(item.bidStack); //modificado para verificar que el pujador actual no vuelve a pujar
-            highestBid = (stackItem.consolePrice == -1)?item.consolePrice:stackItem.consolePrice; //Usamos valor -1 para marcar que no hay puja porque ya hemos marcado antes valores negativos como error, así que ponerlo ahora no modifica nada
-            highestBidStr = (stackItem.consolePrice == -1)?item.seller:stackItem.bidder;
-
-            if (strcmp(highestBidStr, param2) == 0 || strcmp(item.seller, param2) == 0) { //el vendedor de un item, o el pujador más alto, no puede pujar en su propio item
-                error = true;
-            } else {
-                if (bidPrice <= highestBid) { //la puja debe ser válida
-                    error = true;
-                }
-            }
-        }
-    }
-
-    if (error) { //unificamos errores (early returns)
         printf("+ Error: Bid not possible\n");
         return;
     }
 
+    pos = findItem(param1, *list);
+    if (pos == LNULL) { //no se ha encontrado item
+        printf("+ Error: Bid not possible\n");
+        return;
+    }
+
+    item = getItem(pos, *list);
+    stackItem = isEmptyStack(item.bidStack)?(tItemS){.consolePrice = -1, .bidder = ""}:peek(item.bidStack); //modificado para verificar que el pujador actual no vuelve a pujar
+    highestBid = (stackItem.consolePrice == -1)?item.consolePrice:stackItem.consolePrice; //Usamos valor -1 para marcar que no hay puja porque ya hemos marcado antes valores negativos como error, así que ponerlo ahora no modifica nada
+    highestBidStr = (stackItem.consolePrice == -1)?item.seller:stackItem.bidder;
+
+    if (strcmp(highestBidStr, param2) == 0 || strcmp(item.seller, param2) == 0 ||
+        bidPrice <= highestBid) { //el vendedor de un item, o el pujador más alto, no puede pujar en su propio item
+        printf("+ Error: Bid not possible\n");
+        return;
+    }
 
     if (!safeStrCpy(stackItem.bidder, param2, NAME_LENGTH_LIMIT, "BidderId")) {
         printf("+ Error: Bid not possible\n");
