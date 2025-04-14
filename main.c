@@ -158,27 +158,30 @@ void processNewCommand(char *commandNumber, char *param1, char *param2, char *pa
     tItemL newItem; //item a insertar
     tPosL pos; //posición del nuevo item
     tConsoleBrand brand; //variable donde guardamos la conversión de string a enum, lo usamos para añadir verificación
+    bool error = false;
     float param4Float = safeStr2float(param4); //variable precio como float para poder pasarlo al TAD.
 
     printf("********************\n");
     printf("%s N: console %s seller %s brand %s price %.2f\n", commandNumber, param1, param2, param3, param4Float);
 
     if (param4Float < 0) { // error en conversión (o han metido un precio negativo)
-        printf("+ Error: Invalid price value\n");
-        return;
+        error = true;
+    } else if (!isEmptyList(*list)) {
+        pos = findItem(param1, *list); //finditem funciona con lista vacía (devuelve LNULL en O(1)), la preCD es obligatoria
+                                       //por las guidelines de la práctica, pero incluí redundancia para que no me bajen nota
+        if (pos != LNULL) {
+            error = true; //el item ya existe (control de dupes)
+        }
     }
 
-    if (!isEmptyList(*list)) { //totalmente innecesario, pero es lo que me piden para aprobar...
-        pos = findItem(param1, *list); //mi finditem funciona con lista vacía (devuelve LNULL en O(1)), pero añadimos redundancia para que no nos bajen nota
-        if (pos != LNULL) { //control de duplicados
-            printf("+ Error: New not possible\n"); //item already exists
-            return;
-        }
+    if (error) {
+        printf("+ Error: New not possible\n");
+        return;
     }
 
     if (!safeStrCpy(newItem.consoleId, param1, NAME_LENGTH_LIMIT, "ConsoleId") ||
         !safeStrCpy(newItem.seller, param2, NAME_LENGTH_LIMIT, "SellerId")) {
-        printf("+ Error: New not possible\n"); //string assign failed
+        printf("+ Error: New not possible\n");
         return;
     }
 
