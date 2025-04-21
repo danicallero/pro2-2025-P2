@@ -13,40 +13,39 @@
 #include <stdbool.h>
 
 void createEmptyList(tList *L) {
-    *L = LNULL; //Se inicializa con un puntero vacío
+    *L = LNULL; //Se marca como vacía utilizando un valor fijo LNULL.
 }
 
-//Función auxiliar para facilitar la creación de nodos
-
-/* Objetivo: asignar un espacio en la memoria para cada nodo.
- * Entrada: puntero a una posición.
- * Salida: true si hay espacio en memoria y un espacio en ella queda asignado al nodo, false en caso contrario.
- * Postcondición: si la función devuelve true, *p apunta a un nuevo nodo válido en memoria;
- * si devuelve false, *p sigue siendo LNULL y no se ha reservado memoria.
+//Función auxiliar para aislar la reserva de memoria para nodos.
+/* Objetivo: asignar un espacio en la memoria para un nodo.
+ * Entradas:
+ *   - *p: puntero a una posición.
+ * Salida:
+ *    - Devuelve true si hay espacio en memoria y un espacio en ella queda asignado al nodo, false en caso contrario.
+ * Postcondiciónes:
+ *    - El puntero '*p' apunta a un nuevo nodo con espacio reservado en memoria si la función ha devuelto true.
  */
-
 bool allocateNode(tPosL *p){
-    *p = malloc(sizeof(struct tNode)); //reservamos un espacio en memoria del tamaño del nodo
+    *p = malloc(sizeof(struct tNode));  //Se reserva un espacio en memoria del tamaño del nodo.
     return *p != LNULL;
 }
 
 bool isEmptyList(const tList L) {
-    return L == LNULL; //si la lista está vacía se tiene que haber marcado con L=LNULL
+    return L == LNULL;  //Las listas vacías se marcan con L=LNULL en createEmptyList.
 }
 
 bool insertItem(const tItemL data_d, tList *L) {
-    tPosL newNode, prev = LNULL, current = *L;
-    //newNode será el nodo que insertaremos en la lista.
-    //prev es un auxiliar que mantendrá registro del nodo anterior a current.
-    //current recorrerá la lista para encontrar la posición de inserción.
-    bool out = false; //output
+    tPosL newNode;      //El nodo que se inserta en la lista.
+    tPosL prev = LNULL; //Auxiliar que mantendrá registro del nodo anterior a current.
+    tPosL current = *L; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual.
+    bool out = false;   //Auxiliar donde se recoge el output que devolverá return.
 
-    if (allocateNode(&newNode)) { //comprobamos al principio para no cambiar nada si hay error en memoria
+    if (allocateNode(&newNode)) {   //insertItem se ejecuta solo si se ha asignado espacio en memoria correctamente.
 
         newNode->data = data_d;
-        newNode->next = LNULL; //inicializamos como null siempre
+        newNode->next = LNULL;  //Se inicializa como nulo.
 
-        //caso 1: nuevo nodo es el menor: lista vacía (*L) o insertando al inicio
+        //Caso 1: nuevo nodo es el menor: lista vacía (*L) o insertando al inicio.
         if (isEmptyList(*L) || strcmp(data_d.consoleId, (*L)->data.consoleId) < 0) {
             newNode->next = *L;
             *L = newNode;
@@ -68,38 +67,52 @@ bool insertItem(const tItemL data_d, tList *L) {
 
 
 void deleteAtPosition(tPosL p, tList *L) {
-    tPosL prev = *L; //auxiliar de la lista para no modificarla (se pasa por ref.)
-    if (!isEmptyList(*L) && p != LNULL) {     /* Lista vacía o posición inválida. Mejora eficiencia salir de la función
-                                               * en lugar de meternos en búcles con un valor que corromperá la lista
+    tPosL pos = *L; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual, que será el previo del elemento que se quiere eliminar.
+    if (!isEmptyList(*L) && p != LNULL) {     /*Lista vacía o posición inválida. Mejora eficiencia salir de la función
+                                               *en lugar de meternos en búcles con un valor que corromperá la lista
                                                */
-        if (*L == p) { //eliminamos el primer nodo
+        if (*L == p) {  //Se elimina el primer nodo, ('L' –que es el primer nodo de la lista en lista dinámica– es el que se busca, 'p').
             *L = (*L)->next;
             free(p);
         } else {
-            while (prev->next != LNULL && prev->next != p) { //mejor no usar previous(), así no se duplica para atravesar la lista y podemos asegurar que delete nunca elimina una p invalida ni libera un nodo que no existe.
-                prev = prev->next;
+            while (pos->next != LNULL && pos->next != p) {  /*Mejor no usar previous(), así se puede asegurar que delete
+                                                             *nunca elimina una 'p' invalida ni libera un nodo que no existe
+                                                             *integrando la verificación en la lógica de la función.
+                                                             */
+                pos = pos->next;
             }
 
-            if (prev->next == p) { //aseguramos que el puntero encontrado es el que hemos pasado antes de liberarlo
-                prev->next = p->next; //enlazamos el anterior con el posterior
-
-                free(p);
+            if (pos->next == p) {   //Se asegura que el puntero siguiente al de la iteración actual es el que se quiere eliminar.
+                pos->next = p->next;//Se enlaza el nodo previo al que se elimina con el siguiente para no romper la lista.
+                free(p);            //Se libera la memoria solo si se ha re-enlazado correctamente.
             }
         }
     }
 }
 
-tItemL getItem(tPosL p, tList L) { //p es el puntero al struct que contiene la info, tlist no es necesario
+tItemL getItem(tPosL p, tList L) {  /*'p' es el puntero al struct que contiene la info, tlist no es necesario en la
+                                     *implementación dinámica, pero añadirlo asegura uniformidad entre implementaciones.
+                                     */
     return p->data;
 }
 
-void updateItem(tItemL d, tPosL p, tList *L) {
+void updateItem(tItemL d, tPosL p, tList *L) {  /*Al igual que en getItem, tList no es necesario, pero añadirlo garantiza
+                                                 *uniformidad entre implementaciones.
+                                                 */
     p->data = d;
 }
 
-tPosL findItem(tConsoleId id, tList L) {//l sigue siendo puntero. Como una lista vacía tiene L==LNULL, la fc también acepta listas vacías, ya que devolverá null tras el primer intento
-    tPosL p;
-    for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) { //atravesamos hasta encontrar un match, o consoleId es mayor que el pasado. en el peor de los casos la fc es O(n)
+tPosL findItem(tConsoleId id, tList L) {    /*Como una lista vacía tiene L==LNULL, la función también acepta
+                                             *listas vacías siempre que se hayan declarado correctamente como tal con
+                                             *createEmptyList, ya que devolverá null tras el primer intento.
+                                             */
+
+    tPosL p; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual.
+
+    for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) { /*Se atraviesa hasta encontrar una coincidencia,
+                                                                                  *o consoleId es mayor que el del parámetro pasado.
+                                                                                  *En el peor de los casos la función es O(n).
+                                                                                  */
         if (strcmp(p->data.consoleId, id) == 0) return p;
     }
     return LNULL;
@@ -110,24 +123,27 @@ tPosL first(tList L) {
 }
 
 tPosL last(tList L) {
-    while (L->next != LNULL) { //atravesamos hasta el final
+    while (L->next != LNULL) { //Se atraviesa hasta el final. Se hace sin auxiliar porque el parámetro se pasa por valor.
         L = L->next;
     }
     return L;
 }
 
 tPosL previous(tPosL p, tList L) {
-    tPosL out = LNULL; //output. LNULL por defecto
-    if (p != L) { //si la p==L, es el primer nodo y no tiene previo
-        tList prev = L;
-        while (prev->next != LNULL && prev->next != p) { //atravesamos hasta encontrar un puntero cuyo siguiente sea la posición enviada, o el final.
+    tPosL out = LNULL; //Auxiliar donde se recoge el output que devolverá return. LNULL por defecto.
+
+    if (p != L) { //Si 'p' es igual que 'L', 'p' es el nodo del primer elemento y no tiene previo ('L' es el primer nodo de la lista por definición).
+        tList prev = L; //Auxiliar que mantendrá registro del nodo anterior a current.
+        while (prev->next != LNULL && prev->next != p) { //Se atraviesa hasta encontrar un nodo cuyo siguiente sea el enviado, o el final.
             prev = prev->next;
         }
-        out = prev->next == p ? prev : LNULL; //si el que hemos encontrado es el previo, lo devolvemos, si no devolvemos lnull (esto solo es para reforzar integridad).
+        out = prev->next == p ? prev : LNULL; //Si siguiente al que se ha encontrado es 'p', 'prev' es el que se busca.
     }
     return out;
 }
 
-tPosL next(tPosL p, tList L) {
+tPosL next(tPosL p, tList L) {  /*Al igual que en getItem, tList no es necesario, pero añadirlo garantiza
+                                 *uniformidad entre implementaciones.
+                                 */
     return p->next;
 }

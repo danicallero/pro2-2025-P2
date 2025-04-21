@@ -15,7 +15,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define LNULL NULL //en dinámicas usaremos NULL porque trabajamos con punteros
+#define LNULL NULL //Valor fijo para una posición nula.
 
 typedef struct tItemL {
  tUserId seller;
@@ -26,7 +26,7 @@ typedef struct tItemL {
  tStack bidStack;
 } tItemL;
 
-typedef struct tNode *tPosL; //definimos tPosL como puntero a tNode
+typedef struct tNode *tPosL; //Se define tPosL como puntero a tNode.
 
 struct tNode{
   tItemL data;
@@ -64,8 +64,8 @@ bool isEmptyList(tList L);
 /*
  * Objetivo: Inserta un elemento en la lista manteniendo el orden
  * Entradas:
- *   - d: elemento a insertar (tItemL).
- *   - L: puntero a la lista.
+ *   - d: Elemento a insertar (tItemL).
+ *   - L: Puntero a la lista.
  * Salidas:
  *   - True si se insertó el elemento correctamente, false en caso contrario.
  * Postcondiciones:
@@ -77,10 +77,10 @@ bool insertItem(tItemL data_d, tList *L);
 /*
  * Objetivo: Elimina un elemento que ocupa la posición indicada de la lista.
  * Entradas:
- *   - p: posición del elemento a eliminar (tPosL).
- *   - L: puntero a la lista.
+ *   - p: Posición del elemento a eliminar (tPosL).
+ *   - L: Puntero a la lista.
  * Precondiciones:
-*   - La posición p debe ser válida, y la consola en dicha posición tiene una pila de pujas vacía.
+*   - La posición 'p' debe ser válida, y la consola en dicha posición debe tener una pila de pujas vacía.
  * Postcondiciones:
  *   - Se reduce el tamaño de la lista al eliminar de la misma el elemento.
  *   - Los elementos posteriores a la posición 'p' pueden haberse desplazado.
@@ -90,11 +90,11 @@ void deleteAtPosition(tPosL p, tList *L);
 /*
  * Objetivo: Modifica el contenido de un elemento situado en la posición indicada.
  * Entradas:
- *   - d: nuevo valor del elemento (tItemL).
- *   - p: posición del elemento a modificar (tPosL).
- *   - L: puntero a la lista.
+ *   - d: Nuevo valor del elemento (tItemL).
+ *   - p: Posición del elemento a modificar (tPosL).
+ *   - L: Puntero a la lista.
  * Precondiciones:
- *   - La posición p debe ser válida.
+ *   - La posición 'p' debe ser válida.
  * Postcondiciones:
  *   - El contenido del elemento es actualizado, y el orden de la lista queda intacto.
  */
@@ -103,72 +103,72 @@ void updateItem(tItemL d, tPosL p, tList *L);
 /*
  * Objetivo: Obtiene el elemento de una lista en la posición indicada.
  * Entradas:
- *   - p: posición del elemento (tPosL).
- *   - L: lista de donde obtener el elemento.
+ *   - p: Posición del elemento (tPosL).
+ *   - L: Lista de donde obtener el elemento.
  * Salidas:
  *   - El elemento en la posición p (tItemL)
  * Precondiciones:
- *   - La posición p debe ser válida.
+ *   - La posición 'p' debe ser válida.
  */
 tItemL getItem(tPosL p, tList L);
 
 /*
  * Objetivo: Devuelve la posición del primer elemento de la lista.
  * Entradas:
- *   - L: lista a evaluar.
+ *   - L: Lista a evaluar.
  * Salidas:
  *   - Posición del primer elemento (tPosL).
  * Precondiciones:
  *   - La lista no debe estar vacía.
  * Nota de implementación:
- *   - Por la naturaleza de la implementación dinámica, la fc devuelve LNULL si la llamas con una lista vacía e inicializada.
+ *   - Por la naturaleza de la implementación dinámica, la función devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
 tPosL first(tList L);
 
 /*
  * Objetivo: Devuelve la posición del último elemento de la lista.
  * Entradas:
- *   - L: lista a evaluar.
+ *   - L: Lista a evaluar.
  * Salidas:
  *   - Posición del último elemento (tPosL)
  * Precondiciones:
  *   - La lista no debe estar vacía.
  * Nota de implementación:
- *   - Por la naturaleza de la implementación dinámica, la fc devuelve LNULL si la llamas con una lista vacía e inicializada.
+ *   - Por la naturaleza de la implementación dinámica, la función devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
 tPosL last(tList L);
 
 /*
- * Objetivo: Devuelve la posición anterior a una posición dada.
+ * Objetivo: Devuelve la posición del nodo anterior a uno dado.
  * Entradas:
- *   - p: posición actual (tPosL).
- *   - L: lista en la que buscar la posición anterior.
+ *   - p: Posición actual (tPosL).
+ *   - L: Lista en la que buscar la posición anterior.
  * Salidas:
- *   - Posición anterior (tPosL) o LNULL si 'p' es la primera.
+ *   - Posición anterior (tPosL) o LNULL si 'p' es el primer nodo de la lista.
  * Precondiciones:
- *   - La posición p debe ser válida.
+ *   - La posición 'p' debe ser válida.
  */
 tPosL previous(tPosL p, tList L);
 
 /*
- * Objetivo: Devuelve la posición siguiente a una posición dada.
+ * Objetivo: Devuelve la posición del nodo siguiente a uno dado.
  * Entradas:
- *   - p: posición actual (tPosL).
- *   - L: lista en la que buscar la posición siguiente.
+ *   - p: Posición actual (tPosL).
+ *   - L: Lista en la que buscar la posición siguiente.
  * Salidas:
  *   - Posición siguiente (tPosL) o LNULL si 'p' es la última.
  * Precondiciones:
- *   - La posición p debe ser válida.
+ *   - La posición 'p' debe ser válida.
  */
 tPosL next(tPosL p, tList L);
 
 /*
- * Objetivo: Busca el primer elemento en la lista con un identificador.
+ * Objetivo: Busca el nodo que contiene la primera ocurrencia de una consola con el identificador proporcionado.
  * Entradas:
- *   - id: identificador de la consola (tConsoleId).
- *   - L: lista en la que buscar.
+ *   - id: Identificador de la consola (tConsoleId).
+ *   - L: Lista en la que buscar.
  * Salidas:
- *   - Posición del primer elemento si se encuentra (tPosL), o LNULL si no existe.
+ *   - Posición del primer elemento si se encuentra (tPosL), o LNULL si no se ha encontrado ninguna ocurrencia del item en la lista.
  */
 tPosL findItem(tConsoleId id, tList L);
 #endif

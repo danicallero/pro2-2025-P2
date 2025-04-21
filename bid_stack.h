@@ -13,8 +13,8 @@
 #include "types.h"
 #include <stdbool.h>
 
-#define SMAX 25 //items máximo
-#define SNULL -1 //pos nula
+#define SMAX 25 //Nº de ítems máximo.
+#define SNULL -1//Valor fijo para una posición nula.
 
 typedef struct {
     tUserId bidder;
@@ -24,8 +24,8 @@ typedef struct {
 typedef int tPosS;
 
 typedef struct {
-    tItemS data[SMAX]; // Array para almacenar los elementos
-    tPosS top; // Última posición ocupada en la lista (-1 para lista vacía)
+    tItemS data[SMAX];  //Array para almacenar los elementos.
+    tPosS top;          //Última posición ocupada en la lista (-1 para lista vacía).
 } tStack;
 
 /*
@@ -42,8 +42,8 @@ void createEmptyStack(tStack *S);
 /*
  * Objetivo: Inserta un elemento en la cima de la pila.
  * Entradas:
- *   - d: elemento a insertar (tItemS).
- *   - S: puntero a la pila.
+ *   - d: Elemento a insertar (tItemS).
+ *   - S: Puntero a la pila.
  * Salidas:
  *   - True si se insertó el elemento correctamente, false en caso contrario.
  * Postcondiciones:
@@ -65,7 +65,7 @@ void pop(tStack *S);
  * Entradas:
  *   - S: Pila.
  * Salidas:
- *   - El tItemS de la cima
+ *   - El tItemS de la cima.
  * Precondiciones:
  *   - La pila no está vacía.
  */
@@ -74,7 +74,7 @@ tItemS peek(tStack S);
 /*
  * Objetivo: Determina si una pila está vacía.
  * Entradas:
- *   - S: pila a comprobar.
+ *   - S: Pila a comprobar.
  * Salidas:
  *   - Devuelve true si la pila está vacía, false en caso contrario.
  */

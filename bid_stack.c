@@ -10,31 +10,32 @@
 #include "bid_stack.h"
 #include <stdbool.h>
 
-/* Write your code here... */
+
 void createEmptyStack(tStack *S){
-    S->top = SNULL; //cuando vacía top = null
+    S->top = SNULL; //La pila se marca como vacía utilizando un valor fijo LNULL.
 }
 
 bool isEmptyStack(tStack S){
-    return S.top == SNULL; //cuando vacía top = null
+    return S.top == SNULL;  //Una pila está vacía cuando su tamaño es el valor fijo LNULL.
 }
 
 bool push(tItemS d, tStack *S){
-    bool out = false; //output
-    if(S->top >= SMAX-1) //está la lista llena?
+    bool out = false;   //Auxiliar donde se recoge el output que devolverá return.
+
+    if(S->top >= SMAX-1)    //Solo se inserta si la lista no está llena.
         out = false;
     else {
-        S->top++; //un valor más en la lista
-        S->data[S->top] = d; //añadimos a la cima (LIFO)
+        S->top++;   //Se amplía el número de datos útiles registrados.
+        S->data[S->top] = d; //Se añade el elemento a la cima (LIFO).
         out = true;
     }
     return out;
 }
 
 void pop(tStack *S){
-    S->top--; //top es uno menos
+    S->top--; //Se reduce por 1 el número de valores útiles recogidos en la pila.
 }
 
 tItemS peek(tStack S){
-    return S.data[S.top]; //devolvemos top
+    return S.data[S.top]; //Se devuelve el valor que ocupa la posición de la cima en la pila.
 }
