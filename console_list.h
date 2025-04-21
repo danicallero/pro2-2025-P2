@@ -41,7 +41,6 @@ typedef tPosL tList;
  * El último nodo apunta a LNULL.
  */
 
-void createEmptyList(tList *L);
 /*
  * Objetivo: Crea una lista vacía.
  * Entradas:
@@ -51,8 +50,8 @@ void createEmptyList(tList *L);
  * Postcondiciones:
  *   - La lista queda inicializada y se marca como vacía.
  */
+void createEmptyList(tList *L);
 
-bool isEmptyList(tList L);
 /*
  * Objetivo: Determina si una lista está vacía.
  * Entradas:
@@ -60,8 +59,8 @@ bool isEmptyList(tList L);
  * Salidas:
  *   - Devuelve true si la lista está vacía, false en caso contrario.
  */
+bool isEmptyList(tList L);
 
-bool insertItem(tItemL data_d, tList *L);
 /*
  * Objetivo: Inserta un elemento en la lista manteniendo el orden
  * Entradas:
@@ -73,8 +72,8 @@ bool insertItem(tItemL data_d, tList *L);
  *   - Se incrementa el tamaño de la lista y se guarda el nuevo elemento en la posición correspondiente.
  *   - Los elementos en posiciones posteriores pueden haberse desplazado.
  */
+bool insertItem(tItemL data_d, tList *L);
 
-void deleteAtPosition(tPosL p, tList *L);
 /*
  * Objetivo: Elimina un elemento que ocupa la posición indicada de la lista.
  * Entradas:
@@ -86,8 +85,8 @@ void deleteAtPosition(tPosL p, tList *L);
  *   - Se reduce el tamaño de la lista al eliminar de la misma el elemento.
  *   - Los elementos posteriores a la posición 'p' pueden haberse desplazado.
  */
+void deleteAtPosition(tPosL p, tList *L);
 
-void updateItem(tItemL d, tPosL p, tList *L);
 /*
  * Objetivo: Modifica el contenido de un elemento situado en la posición indicada.
  * Entradas:
@@ -99,8 +98,8 @@ void updateItem(tItemL d, tPosL p, tList *L);
  * Postcondiciones:
  *   - El contenido del elemento es actualizado, y el orden de la lista queda intacto.
  */
+void updateItem(tItemL d, tPosL p, tList *L);
 
-tItemL getItem(tPosL p, tList L);
 /*
  * Objetivo: Obtiene el elemento de una lista en la posición indicada.
  * Entradas:
@@ -111,8 +110,8 @@ tItemL getItem(tPosL p, tList L);
  * Precondiciones:
  *   - La posición p debe ser válida.
  */
+tItemL getItem(tPosL p, tList L);
 
-tPosL first(tList L);
 /*
  * Objetivo: Devuelve la posición del primer elemento de la lista.
  * Entradas:
@@ -124,8 +123,8 @@ tPosL first(tList L);
  * Nota de implementación:
  *   - Por la naturaleza de la implementación dinámica, la fc devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
+tPosL first(tList L);
 
-tPosL last(tList L);
 /*
  * Objetivo: Devuelve la posición del último elemento de la lista.
  * Entradas:
@@ -137,8 +136,8 @@ tPosL last(tList L);
  * Nota de implementación:
  *   - Por la naturaleza de la implementación dinámica, la fc devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
+tPosL last(tList L);
 
-tPosL previous(tPosL p, tList L);
 /*
  * Objetivo: Devuelve la posición anterior a una posición dada.
  * Entradas:
@@ -149,8 +148,8 @@ tPosL previous(tPosL p, tList L);
  * Precondiciones:
  *   - La posición p debe ser válida.
  */
+tPosL previous(tPosL p, tList L);
 
-tPosL next(tPosL p, tList L);
 /*
  * Objetivo: Devuelve la posición siguiente a una posición dada.
  * Entradas:
@@ -161,8 +160,8 @@ tPosL next(tPosL p, tList L);
  * Precondiciones:
  *   - La posición p debe ser válida.
  */
+tPosL next(tPosL p, tList L);
 
-tPosL findItem(tConsoleId id, tList L);
 /*
  * Objetivo: Busca el primer elemento en la lista con un identificador.
  * Entradas:
@@ -171,4 +170,5 @@ tPosL findItem(tConsoleId id, tList L);
  * Salidas:
  *   - Posición del primer elemento si se encuentra (tPosL), o LNULL si no existe.
  */
+tPosL findItem(tConsoleId id, tList L);
 #endif
