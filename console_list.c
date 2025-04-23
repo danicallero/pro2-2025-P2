@@ -94,12 +94,14 @@ void deleteAtPosition(tPosL p, tList *L) {
 tItemL getItem(tPosL p, tList L) {  /*'p' es el puntero al struct que contiene la info, tlist no es necesario en la
                                      *implementación dinámica, pero añadirlo asegura uniformidad entre implementaciones.
                                      */
+    (void)L; //Silencia el warning 'unused parameter'.
     return p->data;
 }
 
 void updateItem(tItemL d, tPosL p, tList *L) {  /*Al igual que en getItem, tList no es necesario, pero añadirlo garantiza
                                                  *uniformidad entre implementaciones.
                                                  */
+    (void)L; //Silencia el warning 'unused parameter'.
     p->data = d;
 }
 
@@ -143,5 +145,6 @@ tPosL previous(tPosL p, tList L) {
 tPosL next(tPosL p, tList L) {  /*Al igual que en getItem, tList no es necesario, pero añadirlo garantiza
                                  *uniformidad entre implementaciones.
                                  */
+    (void)L; //Silencia el warning 'unused parameter'.
     return p->next;
 }
