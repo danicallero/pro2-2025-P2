@@ -20,13 +20,13 @@ bool isEmptyStack(tStack S){
 }
 
 bool push(tItemS d, tStack *S){
-    bool out = false;   //Auxiliar donde se recoge el output que devolverá return.
+    bool out = false;       //Auxiliar donde se recoge el output que devolverá return.
 
     if(S->top >= SMAX-1)    //Solo se inserta si la lista no está llena.
         out = false;
     else {
-        S->top++;   //Se amplía el número de datos útiles registrados.
-        S->data[S->top] = d; //Se añade el elemento a la cima (LIFO).
+        S->top++;           //Se amplía el número de datos útiles registrados.
+        S->data[S->top] = d;//Se añade el elemento a la cima (LIFO).
         out = true;
     }
     return out;

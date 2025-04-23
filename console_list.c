@@ -40,7 +40,7 @@ bool insertItem(const tItemL data_d, tList *L) {
     tPosL current = *L; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual.
     bool out = false;   //Auxiliar donde se recoge el output que devolverá return.
 
-    if (allocateNode(&newNode)) {   //insertItem se ejecuta solo si se ha asignado espacio en memoria correctamente.
+    if (allocateNode(&newNode)) {//insertItem se ejecuta solo si se ha asignado espacio en memoria correctamente.
 
         newNode->data = data_d;
         newNode->next = LNULL;  //Se inicializa como nulo.
@@ -50,7 +50,7 @@ bool insertItem(const tItemL data_d, tList *L) {
             newNode->next = *L;
             *L = newNode;
         } else {
-            //caso 2: buscar la posición correcta para mantener el orden
+            //Caso 2: buscar la posición correcta para mantener el orden.
             while (current != LNULL && strcmp(data_d.consoleId, current->data.consoleId) > 0) {
                 prev = current;
                 current = current->next;
@@ -65,27 +65,28 @@ bool insertItem(const tItemL data_d, tList *L) {
     return out;
 }
 
-
 void deleteAtPosition(tPosL p, tList *L) {
-    tPosL pos = *L; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual, que será el previo del elemento que se quiere eliminar.
-    if (!isEmptyList(*L) && p != LNULL) {     /*Lista vacía o posición inválida. Mejora eficiencia salir de la función
-                                               *en lugar de meternos en búcles con un valor que corromperá la lista
-                                               */
-        if (*L == p) {  //Se elimina el primer nodo, ('L' –que es el primer nodo de la lista en lista dinámica– es el que se busca, 'p').
+    if (!isEmptyList(*L) && p != LNULL) {
+        if (p == *L) {
+            // Caso 1: Eliminando el primer nodo.
             *L = (*L)->next;
             free(p);
-        } else {
-            while (pos->next != LNULL && pos->next != p) {  /*Mejor no usar previous(), así se puede asegurar que delete
-                                                             *nunca elimina una 'p' invalida ni libera un nodo que no existe
-                                                             *integrando la verificación en la lógica de la función.
-                                                             */
+        } else if (p->next == LNULL) {
+            // Caso 2: Eliminando el último nodo.
+            tPosL pos = *L;
+            while (pos->next != LNULL && pos->next != p) {
                 pos = pos->next;
             }
-
-            if (pos->next == p) {   //Se asegura que el puntero siguiente al de la iteración actual es el que se quiere eliminar.
-                pos->next = p->next;//Se enlaza el nodo previo al que se elimina con el siguiente para no romper la lista.
-                free(p);            //Se libera la memoria solo si se ha re-enlazado correctamente.
+            if (pos->next == p) {
+                pos->next = LNULL;
+                free(p);
             }
+        } else {
+            // Caso 3: Eliminando un nodo intermedio.
+            tPosL q = p->next;
+            p->data = q->data;
+            p->next = q->next;
+            free(q);
         }
     }
 }
@@ -102,11 +103,7 @@ void updateItem(tItemL d, tPosL p, tList *L) {  /*Al igual que en getItem, tList
     p->data = d;
 }
 
-tPosL findItem(tConsoleId id, tList L) {    /*Como una lista vacía tiene L==LNULL, la función también acepta
-                                             *listas vacías siempre que se hayan declarado correctamente como tal con
-                                             *createEmptyList, ya que devolverá null tras el primer intento.
-                                             */
-
+tPosL findItem(tConsoleId id, tList L) {
     tPosL p; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual.
 
     for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) { /*Se atraviesa hasta encontrar una coincidencia,
@@ -123,7 +120,7 @@ tPosL first(tList L) {
 }
 
 tPosL last(tList L) {
-    while (L->next != LNULL) { //Se atraviesa hasta el final. Se hace sin auxiliar porque el parámetro se pasa por valor.
+    while (L->next != LNULL) { //Se atraviesa hasta el final.
         L = L->next;
     }
     return L;
@@ -131,9 +128,10 @@ tPosL last(tList L) {
 
 tPosL previous(tPosL p, tList L) {
     tPosL out = LNULL; //Auxiliar donde se recoge el output que devolverá return. LNULL por defecto.
+    tList prev; //Auxiliar que mantendrá registro del nodo anterior a current.
 
     if (p != L) { //Si 'p' es igual que 'L', 'p' es el nodo del primer elemento y no tiene previo ('L' es el primer nodo de la lista por definición).
-        tList prev = L; //Auxiliar que mantendrá registro del nodo anterior a current.
+        prev = L; //Auxiliar que mantendrá registro del nodo anterior a current.
         while (prev->next != LNULL && prev->next != p) { //Se atraviesa hasta encontrar un nodo cuyo siguiente sea el enviado, o el final.
             prev = prev->next;
         }
