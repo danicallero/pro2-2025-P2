@@ -366,7 +366,7 @@ void processStatsCommand(char *commandNumber, tList list) {
 
     tPosL pos = first(list); //Posición del elemento para el que se realizarán comprobaciones e impresiones en consola.
 
-    tPosL topItemPos = NULL;  //Auxuliar que guarda la posición del item con la mejor puja.
+    tPosL topItemPos = NULL;  //Auxiliar que guarda la posición del item con la mejor puja.
     float maxIncrease = 0.0f; //Auxiliar que guarda el precio del item con la mejor puja.
 
     printf("********************\n");
@@ -539,7 +539,23 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
     }
 }
 
-
+/* Especificación:
+ * Objetivo: Procesar los comandos recibidos y llamar a las funciones correspondientes según el tipo de comando.
+ * Entradas:
+ *   - commandNumber: Número del comando recibido.
+ *   - command: Tipo de comando.
+ *   - param1, param2, param3, param4: parámetros necesarios según el comando.
+ *   - list: Puntero a la lista donde se aplican las operaciones.
+ *
+ * PreCD:
+ *   - La lista debe estar declarada e inicializada.
+ *
+ * PostCD:
+ *   - Llama a la función correspondiente según el comando recibido, que puede, según proceda, modificar la lista.
+ *   - Si el comando no es reconocido, no se realiza ninguna acción.
+ *
+ * (Función proporcionada por la universidad, modificada ligeramente).
+ */
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
     switch (command) {
         case 'N':
@@ -568,7 +584,20 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
     }
 }
 
-
+/* Especificación:
+ * Objetivo: Leer los comandos desde un archivo y procesarlos uno por uno.
+ * Entradas:
+ *   - filename: Nombre del archivo que contiene los comandos.
+ *   - list: Puntero a la lista donde se almacenará la información.
+ *
+ * PreCD:
+ *   - El archivo debe existir y ser accesible.
+ * PostCD:
+ *   - Se procesan todos los comandos hasta finalizar el archivo, y la lista puede quedar modificada por su ejecución.
+ *   - Si el archivo no se encuentra, se muestra un error.
+ *
+ * (Función proporcionada por la universidad, modificada ligeramente).
+ */
 void readTasks(char *filename, tList *list) {
 
     FILE *f = NULL;
