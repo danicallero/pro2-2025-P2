@@ -14,6 +14,16 @@
 #include <stdbool.h>
 
 /**
+ * @file bid_stack.h
+ * @brief Gestion del TAD pila estática de pujas.
+ *
+ * @note
+ * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
+ * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
+ * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ */
+
+/**
  *@brief Nº de ítems máximo en tStack.
  */
 #define SMAX 25
@@ -42,17 +52,17 @@ typedef int tPosS;
  */
 typedef struct {
     tItemS data[SMAX]; /**< Array que almacena los elementos de la pila. */
-    tPosS top;         /**< Última posición ocupada en la pila (-1 si tStack está vacío). */
+    tPosS top;         /**< Última posición ocupada en la pila (SNULL si tStack está vacío). */
 } tStack;
 
 /*
- * Objetivo: Crea una pila vacía.
+ * Objetivo: Inicializa un stack vacío.
  * Entradas:
- *   - S: puntero a la pila a inicializar.
+ *   - S: Puntero al stack a inicializar.
  * Precondiciones:
- *   - La pila debe estar declarada.
+ *   - El stack debe estar declarado.
  * Postcondiciones:
- *   - La pila queda inicializada y se marca como vacía.
+ *   - El stack queda inicializado y marcado como vacío.
  */
 /**
  * @brief Inicializa un stack vacío.
@@ -65,28 +75,28 @@ void createEmptyStack(tStack *S);
 /*
  * Objetivo: Inserta un elemento en la cima de la pila.
  * Entradas:
- *   - d: Elemento a insertar (tItemS).
- *   - S: Puntero a la pila.
+ *   - d: Item a insertar.
+ *   - S: Puntero al stack.
  * Salidas:
- *   - True si se insertó el elemento correctamente, false en caso contrario.
+ *   - True si la inserción fue exitosa, false de lo contrario.
  * Postcondiciones:
- *   - Se incrementa el tamaño de la pila.
+ *   - El tamaño del stack se incrementa por 1 al guardar ahora el nuevo item.
  */
 /**
  * @brief Inserta un elemento en la cima de la pila.
  * @param[in] d Item a insertar.
  * @param[in,out] S Puntero al stack.
  * @return true si la inserción fue exitosa, false de lo contrario.
- * @post El tamaño del stack se incrementa por 1.
+ * @post El tamaño del stack se incrementa por 1 al guardar ahora el nuevo item.
  */
 bool push(tItemS d, tStack *S);
 
 /*
- * Objetivo: Elimina el elemento en la cima de la pila.
+ * Objetivo: Elimina el elemento de la cima del stack.
  * Entradas:
- *   - S: puntero a la pila.
+ *   - S: Puntero al stack.
  * Precondiciones:
- *   - La pila no está vacía.
+ *   - El stack no puede estar vacío.
  */
 /**
  * @brief Elimina el elemento de la cima del stack.
@@ -96,17 +106,17 @@ bool push(tItemS d, tStack *S);
 void pop(tStack *S);
 
 /*
- * Objetivo: Devuelve el elemento en la cima de la pila.
+ * Objetivo: Devuelve el elemento de la cima de la pila.
  * Entradas:
- *   - S: Pila.
+ *   - S: Variable de tipo tStack.
  * Salidas:
- *   - El tItemS de la cima.
+ *   - El elemento tItemS de la cima del stack.
  * Precondiciones:
- *   - La pila no está vacía.
+ *   - El stack no puede estar vacío.
  */
 /**
  * @brief Devuelve el elemento de la cima de la pila.
- * @param[in] S variable de tipo tStack.
+ * @param[in] S Variable de tipo tStack.
  * @return El elemento tItemS de la cima del stack.
  * @pre El stack no puede estar vacío.
  */
@@ -115,13 +125,13 @@ tItemS peek(tStack S);
 /*
  * Objetivo: Determina si una pila está vacía.
  * Entradas:
- *   - S: Pila a comprobar.
+ *   - S: Variable de tipo tStack.
  * Salidas:
- *   - Devuelve true si la pila está vacía, false en caso contrario.
+ *   - true si el stack está vacío, false de lo contrario.
  */
 /**
  * @brief Comprueba si un stack está vacío.
- * @param[in] S variable de tipo tStack.
+ * @param[in] S Variable de tipo tStack.
  * @return true si el stack está vacío, false de lo contrario.
  */
 bool isEmptyStack(tStack S);

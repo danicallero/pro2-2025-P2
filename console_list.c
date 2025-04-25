@@ -12,6 +12,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+/**
+ * @file console_list.c
+ * @brief Gestión del TAD Lista dinámica ordenada de consolas.
+ *
+ * @note
+ * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
+ * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
+ * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ */
+
 void createEmptyList(tList *L) {
     *L = LNULL; //Se marca como vacía utilizando un valor fijo LNULL.
 }
@@ -25,6 +35,16 @@ void createEmptyList(tList *L) {
  * Postcondiciónes:
  *    - El puntero '*p' apunta a un nuevo nodo con espacio reservado en memoria si la función ha devuelto true.
  */
+/**
+ * @brief Asigna memoria dinámicamente para un nuevo nodo.
+ *
+ * @param[out] p Puntero a la posición que apuntará al nuevo nodo.
+ *
+ * @return true si la asignación de memoria fue exitosa, false en caso contrario.
+ *
+ * @post Si devuelve true, '*p' apuntará a un nuevo nodo con memoria reservada.
+ */
+
 bool allocateNode(tPosL *p){
     *p = malloc(sizeof(struct tNode));  //Se reserva un espacio en memoria del tamaño del nodo.
     return *p != LNULL;

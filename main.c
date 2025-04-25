@@ -13,16 +13,35 @@
 #include "types.h"
 #include "console_list.h"
 
+/**
+ * @file main.c
+ * @brief Gestión de plataforma de pujas de consolas.
+ *
+ * @note
+ * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
+ * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
+ * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ */
+
+/**
+ * @brief Número máximo de caracteres por línea en el archivo de entrada.
+ */
 #define MAX_BUFFER 255
 
 
 /* Especificación:
- * Objetivo: Transformar un valor enum a una cadena de caracteres.
+ * Objetivo: Transforma un valor tConsoleBrand a una cadena de caracteres equivalente.
  * Entrada:
- *  - brand: enum (tConsoleBrand)
+ *  - brand: Valor enum de tipo tConsoleBrand.
  * Salida:
- *  - string (nintendo o sega)
- * Nota: si se le mete cualquier entrada de marca no conocida devolverá "unknown"
+ *  - string: Cadena de caracteres equivalente al tConsoleBrand dado, o "unknown" si se ha pasado otro enum.
+ */
+/**
+ * @brief Transforma un valor tConsoleBrand a una cadena de caracteres equivalente.
+ *
+ * @param[in] brand Valor enum de tipo tConsoleBrand.
+ *
+ * @retval string Cadena de caracteres equivalente al tConsoleBrand dado, o "unknown" si se ha pasado otro enum.
  */
 char *consoleBrand2String(tConsoleBrand brand) {
     switch (brand) {
@@ -33,14 +52,24 @@ char *consoleBrand2String(tConsoleBrand brand) {
 }
 
 /* Especificación:
- * Objetivo: Transformar las mayúsculas de una cadena de caracteres a minúsculas.
+ * Objetivo: Transforma las mayúsculas de un string a minúsculas.
  * Entrada:
- *  - str: Puntero al string que se quiere transformar.
+ *  - str: Puntero a un string.
  * PreCD:
- *  - 'str' debe ser un puntero válido que apunte a un string existente.
+ *  - El puntero 'str' debe apuntar a un string válido.
  * PosCD:
- *  - 'str' ahora no tiene mayúsculas.
- * WARNING: Esta función modifica 'src' directamente, no devuelve un duplicado.
+ *  - El string se modifica y ya no contiene mayúsculas.
+ * WARNING: Esta función modifica 'str' diréctamente, NO devuelve un duplicado.
+ */
+/**
+ * @brief Transforma las mayúsculas de un string a minúsculas.
+ *
+ * @param[in,out] str Puntero a un string.
+ *
+ * @pre El puntero 'str' debe apuntar a un string válido.
+ * @post El string se modifica y ya no contiene mayúsculas.
+ *
+ * @attention Esta función modifica 'str' diréctamente, NO devuelve un duplicado.
  */
 void toLower(char *str) {
     for (; *str; str++) {
@@ -53,15 +82,30 @@ void toLower(char *str) {
 }
 
 /* Especificación:
- * Objetivo: Transformar una cadena de caracteres a un valor enum.
+ * Objetivo: Transforma una cadena de caracteres en su valor equivalente del enum tConsoleBrand.
  * Entrada:
- *  - source: String.
- *  - dest: Puntero de la variable donde vamos a guardar el enum.
+ *  - source: Cadena que representa una marca.
+ *  - dest: Puntero a una variable de tipo tConsoleBrand donde se almacenará el valor del enum.
  * Salida:
  *  - La función devuelve true si la marca existe entre los datos del enum tConsoleBrand (types.h), false si no.
  * PosCD:
- *  - 'str' se pasará a minúsculas al llamar a la función.
- *  - 'dest' tomará el valor del enum correspondiente en caso de existir.
+ *  - La cadena 'source' se convierte a minúsculas al llamar a la función.
+ *  - Si la función retorna true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
+ *  WARNING: Llamar a esta función transformará el string 'source' que se le pase a minúsculas.
+ */
+/**
+ * @brief Transforma una cadena de caracteres en su valor equivalente del enum tConsoleBrand.
+ *
+ * @param[in,out] source Cadena que representa una marca.
+ * @param[out] dest Puntero a una variable de tipo tConsoleBrand donde se almacenará el valor del enum.
+ *
+ * @retval true La marca existe dentro de los valores definidos en tConsoleBrand
+ * @retval false No se encontró la marca entre los valores de tConsoleBrand.
+ *
+ * @post –  La cadena 'source' se convierte a minúsculas al llamar a la función.
+ * @post –  Si la función retorna true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
+ *
+ * @attention Llamar a esta función transformará el string 'source' que se le pase a minúsculas.
  */
 bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
     bool out = false; //Auxiliar donde se recoge el output que devolverá return.
@@ -79,11 +123,19 @@ bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
 }
 
 /* Especificación:
- * Objetivo: Transformar de forma segura un string a float.
+ * Objetivo: Transforma de forma segura un valor de tipo string a float.
  * Entrada:
- *  - str: String.
+ *  - str: Puntero al string que se quiere transformar.
  * Salida:
  *  - El string transformado a float o -1.0f en caso de fallo en la conversión.
+ */
+/**
+ * @brief Transforma de forma segura un valor de tipo string a float.
+ *
+ * @param[in] str Puntero al string que se quiere transformar.
+ *
+ * @retval float que contiene el valor representado por el string pasado, o
+ * @retval float con valor -1.0f en caso de error.
  */
 float safeStr2float(const char *str) {
     char *endptr; //Variable donde 'strtof' guarda el último puntero del string.
@@ -97,13 +149,21 @@ float safeStr2float(const char *str) {
 }
 
 /* Especificación
- * Objetivo: Vaciar los contenidos de un stack.
+ * Objetivo: Vacía los contenidos de una pila tStack.
  * Entrada:
- *  - stack: El stack que se desea vaciar (tStack).
+ *  - stack: Puntero a la pila tStack que se quiere vaciar.
  * PreCD:
- *  - El stack debe estar inicializado.
+ *  - El puntero debe apuntar a una pila inicializada.
  * PosCD:
- *  - El stack queda vaciado.
+ *  - La pila queda vaciada.
+ */
+/**
+ * @brief Vacía los contenidos de una pila tStack.
+ *
+ * @param[in,out] stack Puntero a la pila tStack que se quiere vaciar.
+ *
+ * @pre El puntero debe apuntar a una pila inicializada.
+ * @post La pila queda vaciada.
  */
 void clearStack(tStack *stack) {
     while (!isEmptyStack(*stack)) { //Se atraviesa el stack mientras no esté vacío.
@@ -112,16 +172,35 @@ void clearStack(tStack *stack) {
 }
 
 /* Especificación
- * Objetivo: Gestionar de forma unificada la eliminación de consolas y el vaciado de sus stacks de pujas.
+ * Objetivo: Gestiona de forma unificada la eliminación de consolas cumpliendo con la precondición de vaciar la pila de
+ * pujas previamente.
+ *
  * Entradas:
- *  - pos: Posición del elemento a eliminar (tPosL).
- *  - list: Lista en la que se encuentra el elemento que se quiere eliminar (tList).
+ *  - pos: Posición tPosL del elemento que se quiere eliminar.
+ *  - item: Puntero al tItemL que se encuentra en la tPosL 'pos'.
+ *  - list: Puntero a la lista en la que se encuentra el item.
  * PreCD:
- *  - La lista debe estar inicializada.
- *  - La posición debe ser una posición correcta que contenga un elemento de la lista.
- *  - El item debe ser el elemento contenido en la posición 'pos'.
+ *  - La lista debe apuntar a una tList inicializada.
+ *  - La posición debe ser una posición válida que contenga un elemento de la lista.
+ *  - El puntero item debe apuntar al tItemL que se encuentra en la posición 'pos'.
  * PosCD:
- *  - Los elementos de la lista pueden haber cambiado de orden.
+ *  - La pila de pujas del elemento 'item' queda vaciada.
+ *  - El elemento 'item' se elimina de la lista, y como consecuencia otros elementos pueden haber sido desplazados.
+ */
+/**
+ * @brief Gestiona de forma unificada la eliminación de consolas cumpliendo con la precondición de vaciar la pila de
+ * pujas previamente.
+ *
+ * @param[in] pos Posición tPosL del elemento que se quiere eliminar.
+ * @param[in,out] item Puntero al tItemL que se encuentra en la tPosL 'pos'.
+ * @param[in,out] list Puntero a la lista en la que se encuentra el item.
+ *
+ * @pre - 'list' debe apuntar a una tList inicializada.
+ * @pre - La tPosL 'pos' debe ser una posición válida que contenga un elemento de la lista.
+ * @pre - El puntero 'item' debe apuntar al tItemL que se encuentra en la posición 'pos'.
+ *
+ * @post - La pila de pujas del elemento 'item' queda vaciada.
+ * @post - El elemento 'item' se elimina de la lista, y como consecuencia otros elementos pueden haber sido desplazados.
  */
 void handleDeleteConsole(tPosL pos, tItemL *item, tList *list) {
     clearStack(&item->bidStack);
@@ -130,14 +209,27 @@ void handleDeleteConsole(tPosL pos, tItemL *item, tList *list) {
 }
 
 /* Especificación
- * Objetivo: Copiar de forma segura un string a un destino, asegurando que no haya overflow o errores.
+ * Objetivo: Copia de forma segura una cadena de caracteres de un string de origen a otro de destino, asegurando que no
+ * se produzca overflow y avisando de posibles errores.
  * Entradas:
- *  - dest: String de destino.
- *  - src: String de origen.
- *  - size: Tamaño máximo, incluyendo la terminación null, del string de destino.
- *  - label: Identificador del string que se imprimirá en los mensajes de error.
+ *  - dest: Puntero al de destino, que se sobreescribirá con los contenidos de 'src'.
+ *  - src: Puntero al string de origen. No se modifica.
+ *  - size: Valor de tipo size_t. Tamaño máximo del string incluyendo la terminación '\0'.
+ *  - label: Nombre descriptivo del string que se imprimirá en el mensaje de error.
  * Salida:
  *  - La función devuelve true en caso de que se haya copiado con éxito, false en caso contrario.
+ */
+/**
+ * @brief Copia de forma segura una cadena de caracteres de un string de origen a otro de destino, asegurando que no se
+ * produzca overflow y avisando de posibles errores.
+ *
+ * @param[out] dest Puntero al de destino, que se sobreescribirá con los contenidos de 'src'.
+ * @param[in] src Puntero al string de origen. No se modifica.
+ * @param[in] size Valor de tipo size_t. Tamaño máximo del string incluyendo la terminación '\0'.
+ * @param[in] label Nombre descriptivo del string que se imprimirá en el mensaje de error.
+ *
+ * @retval true La cadena de caracteres se copió exitosamente.
+ * @retval false La cadena de caracteres no se copió exitosamente, se imprime en consola un mensaje explicativo del error.
  */
 bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
     bool out = false; //Auxiliar donde se recoge el output que devolverá return.
@@ -158,19 +250,37 @@ bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
 /* Especificación:
  * Objetivo: Procesar el comando 'N' para añadir una nueva consola a la lista.
  * Entradas:
- *  - commandNumber: Número de comando.
- *  - consoleId_p: consoleId.
- *  - sellerId_p: vendedor (seller).
- *  - consoleBrand_p: marca (consoleBrand).
- *  - consolePrice_p: precio (consolePrice).
- *  - list: Lista en la que se guardan los valores (tList).
+ *  - commandNumber: Cadena de caracteres que contiene el número de comando. Este valor solo ayuda a mantener
+ * registro de la petición, no tiene otro uso.
+ *  - consoleId_p: Cadena que contiene el identificador de la consola a insertar.
+ *  - sellerId_p: Cadena que contiene el identificador del vendedor.
+ *  - consoleBrand_p: Cadena que representa la marca de la consola.
+ *  - consolePrice_p:Cadena que representa el precio de la consola.
+ *  - list: Puntero a la lista donde se guardará el item.
  *
  * PostCD:
  *  - Se imprime el resultado y modifica la lista si el comando es válido.
  *  - Se imprime '+ Error:' seguido de una explicación en caso de fallo.
  *
- * Nota: No permite insertar duplicados, valores ID o seller con strings de longitud inválida y prevé errores básicos
- *  en precio.
+ * Nota: No permite la inserción de duplicados, cadenas de caracteres con strings de longitud inválida, y evita errores
+ * básicos.
+ */
+/**
+ * @brief Procesa el comando 'N' para añadir una nueva consola en una lista tList.
+ *
+ * @param[in] commandNumber Cadena de caracteres que contiene el número de comando. Este valor solo ayuda a mantener
+ * registro de la petición, no tiene otro uso.
+ * @param[in] consoleId_p Cadena que contiene el identificador de la consola a insertar.
+ * @param[in] sellerId_p Cadena que contiene el identificador del vendedor.
+ * @param[in] consoleBrand_p Cadena que representa la marca de la consola.
+ * @param[in] consolePrice_p Cadena que representa el precio de la consola.
+ * @param[in,out] list Puntero a la lista donde se guardará el item.
+ *
+ * @post - Se imprime el resultado y se modifica la lista si el comando está bien formulado.
+ * @post - Se imprime '+ Error:' seguido de un aviso en caso de fallo.
+ *
+ * @remark No permite la inserción de duplicados, cadenas de caracteres con strings de longitud inválida, y evita errores
+ * básicos.
  */
 void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p, char *consoleBrand_p,
     char *consolePrice_p, tList *list) {
@@ -513,7 +623,6 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
 
     averageBids = (float)totalBids / (float)numConsoles;
     range = 2 * averageBids;
-    invalidated = false;
 
     pos = first(*list);
 

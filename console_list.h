@@ -15,31 +15,52 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define LNULL NULL //Valor fijo para una posición nula.
+/**
+ * @file console_list.h
+ * @brief Gestión del TAD Lista dinámica ordenada de consolas.
+ *
+ * @note
+ * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
+ * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
+ * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ */
 
+/**
+ *@brief Valor fijo para una posición de la tList nula.
+ */
+#define LNULL NULL
+
+/**
+ * @brief Estructura que representa un ítem (elemento) de la lista tList.
+ * Contiene toda la información característica de una consola.
+ */
 typedef struct tItemL {
- tUserId seller;
- tConsoleId consoleId;
- tConsoleBrand consoleBrand;
- tConsolePrice consolePrice;
- tBidCounter bidCounter;
- tStack bidStack;
+ tUserId seller; /**< ID del usuario que vende la consola.*/
+ tConsoleId consoleId; /**< ID de la consola.*/
+ tConsoleBrand consoleBrand; /**< Marca de la consola.*/
+ tConsolePrice consolePrice; /**< Precio original de la consola*/
+ tBidCounter bidCounter; /**< Número de pujas que se han realizado sobre la consola*/
+ tStack bidStack; /**< Stack que guarda las pujas realizadas sobre la consola*/
 } tItemL;
 
+/**
+ * @brief tPosL se define como un puntero a un nodo tNode.
+ */
 typedef struct tNode *tPosL; //Se define tPosL como puntero a tNode.
 
+/**
+ * @brief Estructura que representa un nodo de la lista dinámica.
+ * Contiene un tItemL y un enlace al nodo siguiente 'next'.
+ */
 struct tNode{
-  tItemL data;
-  tPosL next;
+  tItemL data; /**< Struct que guarda la información de una consola.*/
+  tPosL next; /**< Enlace al siguiente nodo. Un valor next = LNULL determina el final de la lista.*/
 };
 
-typedef tPosL tList;
-/*
- * tList es un alias de tPosL, que a su vez apunta a un struct tNode. Por ello tList será puntero al primer elemento de la lista.
- * Si la lista está vacía la inicializamos apuntando a LNULL, si tiene algún elemento, este habitará la primera pos (tList),
- * o se insertará a continuación enlazando el nuevo nodo en la tPosL next.
- * El último nodo apunta a LNULL.
+/**
+ * @brief tList se define como un tipo equivalente a tNode, por ello, tList será el primer nodo de la lista enlazada.
  */
+typedef tPosL tList;
 
 /*
  * Objetivo: Crea una lista vacía.
@@ -50,6 +71,14 @@ typedef tPosL tList;
  * Postcondiciones:
  *   - La lista queda inicializada y se marca como vacía.
  */
+/**
+ * @brief Crea una lista vacía.
+ *
+ * @param[out] L Puntero a la lista a inicializar.
+ *
+ * @pre La lista debe estar declarada.
+ * @post La lista queda inicializada y se marca como vacía.
+ */
 void createEmptyList(tList *L);
 
 /*
@@ -58,6 +87,13 @@ void createEmptyList(tList *L);
  *   - L: lista a comprobar.
  * Salidas:
  *   - Devuelve true si la lista está vacía, false en caso contrario.
+ */
+/**
+ * @brief Comprueba si una lista está vacía.
+ *
+ * @param[in] L Lista a comprobar.
+ *
+ * @return true si la lista está vacía, false en caso contrario.
  */
 bool isEmptyList(tList L);
 
@@ -72,6 +108,17 @@ bool isEmptyList(tList L);
  *   - Se incrementa el tamaño de la lista y se guarda el nuevo elemento en la posición correspondiente.
  *   - Los elementos en posiciones posteriores pueden haberse desplazado.
  */
+/**
+ * @brief Inserta un elemento en la lista manteniendo el orden.
+ *
+ * @param[in] data_d Elemento a insertar.
+ * @param[in,out] L Puntero a la lista.
+ *
+ * @return true si se insertó correctamente, false en caso contrario.
+ *
+ * @post La lista aumenta de tamaño y el elemento se coloca en su posición ordenada. Los elementos posteriores pueden
+ * haberse desplazado.
+ */
 bool insertItem(tItemL data_d, tList *L);
 
 /*
@@ -80,10 +127,19 @@ bool insertItem(tItemL data_d, tList *L);
  *   - p: Posición del elemento a eliminar (tPosL).
  *   - L: Puntero a la lista.
  * Precondiciones:
-*   - La posición 'p' debe ser válida, y la consola en dicha posición debe tener una pila de pujas vacía.
+ *   - La posición 'p' debe ser válida, y la consola en dicha posición debe tener una pila de pujas vacía.
  * Postcondiciones:
  *   - Se reduce el tamaño de la lista al eliminar de la misma el elemento.
  *   - Los elementos posteriores a la posición 'p' pueden haberse desplazado.
+ */
+/**
+ * @brief Elimina un elemento de la posición indicada en la lista.
+ *
+ * @param[in] p Posición del elemento a eliminar.
+ * @param[in,out] L Puntero a la lista.
+ *
+ * @pre La posición 'p' debe ser válida y el elemento debe tener una pila de pujas vacía.
+ * @post La lista disminuye de tamaño y los elementos posteriores a 'p' pueden haberse desplazado.
  */
 void deleteAtPosition(tPosL p, tList *L);
 
@@ -98,6 +154,16 @@ void deleteAtPosition(tPosL p, tList *L);
  * Postcondiciones:
  *   - El contenido del elemento es actualizado, y el orden de la lista queda intacto.
  */
+/**
+ * @brief Modifica el contenido de un elemento en la posición indicada.
+ *
+ * @param[in] d Nuevo valor del elemento.
+ * @param[in] p Posición del elemento a modificar.
+ * @param[in,out] L Puntero a la lista.
+ *
+ * @pre La posición 'p' debe ser válida.
+ * @post El contenido del elemento se actualiza, el orden de la lista se mantiene.
+ */
 void updateItem(tItemL d, tPosL p, tList *L);
 
 /*
@@ -109,6 +175,16 @@ void updateItem(tItemL d, tPosL p, tList *L);
  *   - El elemento en la posición p (tItemL)
  * Precondiciones:
  *   - La posición 'p' debe ser válida.
+ */
+/**
+ * @brief Obtiene el elemento de una lista en la posición dada.
+ *
+ * @param[in] p Posición del elemento.
+ * @param[in] L Lista desde la que se obtiene el elemento.
+ *
+ * @return El elemento en la posición p.
+ *
+ * @pre La posición 'p' debe ser válida.
  */
 tItemL getItem(tPosL p, tList L);
 
@@ -123,6 +199,16 @@ tItemL getItem(tPosL p, tList L);
  * Nota de implementación:
  *   - Por la naturaleza de la implementación dinámica, la función devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
+/**
+ * @brief Devuelve la posición del primer elemento de la lista.
+ *
+ * @param[in] L Lista a evaluar.
+ *
+ * @return Posición del primer elemento.
+ *
+ * @pre La lista no debe estar vacía.
+ * @remark Por la naturaleza de la implementación dinámica, devuelve LNULL si la lista está vacía e inicializada.
+ */
 tPosL first(tList L);
 
 /*
@@ -136,6 +222,16 @@ tPosL first(tList L);
  * Nota de implementación:
  *   - Por la naturaleza de la implementación dinámica, la función devuelve LNULL si la llamas con una lista vacía e inicializada.
  */
+/**
+ * @brief Devuelve la posición del último elemento de la lista.
+ *
+ * @param[in] L Lista a evaluar.
+ *
+ * @return Posición del último elemento.
+ *
+ * @pre La lista no debe estar vacía.
+ * @remark Por la naturaleza de la implementación dinámica, devuelve LNULL si la lista está vacía e inicializada.
+ */
 tPosL last(tList L);
 
 /*
@@ -147,6 +243,16 @@ tPosL last(tList L);
  *   - Posición anterior (tPosL) o LNULL si 'p' es el primer nodo de la lista.
  * Precondiciones:
  *   - La posición 'p' debe ser válida.
+ */
+/**
+ * @brief Devuelve la posición del nodo anterior al proporcionado.
+ *
+ * @param[in] p Posición actual.
+ * @param[in] L Lista donde buscar.
+ *
+ * @return Posición anterior o LNULL si 'p' es el primero.
+ *
+ * @pre La posición 'p' debe ser válida.
  */
 tPosL previous(tPosL p, tList L);
 
@@ -160,6 +266,16 @@ tPosL previous(tPosL p, tList L);
  * Precondiciones:
  *   - La posición 'p' debe ser válida.
  */
+/**
+ * @brief Devuelve la posición del nodo siguiente al proporcionado.
+ *
+ * @param[in] p Posición actual.
+ * @param[in] L Lista donde buscar.
+ *
+ * @return Posición siguiente o LNULL si 'p' es el último.
+ *
+ * @pre La posición 'p' debe ser válida.
+ */
 tPosL next(tPosL p, tList L);
 
 /*
@@ -169,6 +285,14 @@ tPosL next(tPosL p, tList L);
  *   - L: Lista en la que buscar.
  * Salidas:
  *   - Posición del primer elemento si se encuentra (tPosL), o LNULL si no se ha encontrado ninguna ocurrencia del item en la lista.
+ */
+/**
+ * @brief Busca un elemento con el identificador dado en la lista.
+ *
+ * @param[in] id Identificador de la consola.
+ * @param[in] L Lista donde buscar.
+ *
+ * @return Posición del primer elemento con ese ID o LNULL si no se encuentra.
  */
 tPosL findItem(tConsoleId id, tList L);
 #endif
