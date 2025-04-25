@@ -233,7 +233,7 @@ cmake --build build
 
 ## **Limitaciones y notas**
 - La pila tiene un límite (`SMAX`) que restringe la cantidad de pujas por consola.
-- Las funciones no gestionan entradas inválidas como punteros nulos por directrices docentes.
+- Las funciones del TAD no gestionan entradas inválidas como punteros nulos por directrices docentes.
 
 ---
 ## Agradecimientos
