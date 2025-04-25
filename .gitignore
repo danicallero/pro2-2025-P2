@@ -3,7 +3,7 @@ bin
 script_minimos
 script_test
 script.sh
-script_custom.sh
+script_macOS.sh
 test_bid_stack
 test_console_list
 main
@@ -11,3 +11,4 @@ test_bid_stack.c
 test_console_list.c
 .DS_Store
 .idea/
+docs
