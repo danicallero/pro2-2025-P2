@@ -43,7 +43,7 @@
  *
  * @retval string Cadena de caracteres equivalente al tConsoleBrand dado, o "unknown" si se ha pasado otro enum.
  */
-char *consoleBrand2String(tConsoleBrand brand) {
+char *consoleBrand2String(const tConsoleBrand brand) {
     switch (brand) {
         case nintendo: return "nintendo";
         case sega: return "sega";
@@ -90,7 +90,7 @@ void toLower(char *str) {
  *  - La función devuelve true si la marca existe entre los datos del enum tConsoleBrand (types.h), false si no.
  * PosCD:
  *  - La cadena 'source' se convierte a minúsculas al llamar a la función.
- *  - Si la función retorna true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
+ *  - Si la función devuelve true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
  *  WARNING: Llamar a esta función transformará el string 'source' que se le pase a minúsculas.
  */
 /**
@@ -103,7 +103,7 @@ void toLower(char *str) {
  * @retval false No se encontró la marca entre los valores de tConsoleBrand.
  *
  * @post –  La cadena 'source' se convierte a minúsculas al llamar a la función.
- * @post –  Si la función retorna true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
+ * @post –  Si la función devuelve true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
  *
  * @attention Llamar a esta función transformará el string 'source' que se le pase a minúsculas.
  */
@@ -231,7 +231,7 @@ void handleDeleteConsole(tPosL pos, tItemL *item, tList *list) {
  * @retval true La cadena de caracteres se copió exitosamente.
  * @retval false La cadena de caracteres no se copió exitosamente, se imprime en consola un mensaje explicativo del error.
  */
-bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
+bool safeStrCpy(char *dest, const char *src, const size_t size, const char *label) {
     bool out = false; //Auxiliar donde se recoge el output que devolverá return.
 
     if (dest == NULL || src == NULL || size == 0) {
@@ -283,7 +283,7 @@ bool safeStrCpy(char *dest, const char *src, size_t size, char *label) {
  * básicos.
  */
 void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p, char *consoleBrand_p,
-    char *consolePrice_p, tList *list) {
+    const char *consolePrice_p, tList *list) {
     tItemL newItem;         //Elemento item que se rellenará con la información del item a insertar.
     tPosL pos;              //La posición en la lista del item a insertar.
     tConsoleBrand brand;                              //Variable donde se guarda la conversión de string a enum.
@@ -310,7 +310,7 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
         return;
     }
 
-    if (!string2ConsoleBrand(consoleBrand_p, &brand)) {
+    if (!string2ConsoleBrand(consoleBrand_p, &brand)) { //¡¡¡Sé que source se pasa a minúsculas, es a propósito!!!
         printf("+ Error: New not possible\n"); //La marca no es válida.
         return;
     }
@@ -338,6 +338,17 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
  *  - Imprime el resultado y modifica la lista si el comando es válido.
  *  - Imprime Error si el elemento no se encuentra.
  */
+/**
+ * @brief Procesa el comando 'D' para eliminar una consola de la lista.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in] consoleId_p Identificador de la consola a eliminar.
+ * @param[in,out] list Lista en la que se encuentra la consola (tList).
+ *
+ * @post Se imprime el resultado y se modifica la lista si el comando es válido.
+ * @post Imprime "+ Error: Delete not possible" si el elemento no se encuentra.
+ */
+
 void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
     printf("********************\n");
     printf("%s D: console %s\n", commandNumber, consoleId_p);
@@ -370,6 +381,19 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
  * Nota:
  *  - Se imprime '+ Error:' si la consola no existe, el vendedor es el pujador, el mayor pujador es el pujador, o el
  *      precio de puja es inferior al mayor precio listado.
+ */
+/**
+ * @brief Procesa el comando 'B' para realizar una puja sobre una consola existente.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in] consoleId_p Identificador de la consola.
+ * @param[in] bidderId_p Identificador del pujador.
+ * @param[in] consolePrice_p Cadena con el importe de la puja.
+ * @param[in,out] list Lista en la que se guardan los valores (tList).
+ *
+ * @post Se imprime el resultado y se actualiza el precio y contador de pujas si la puja es válida.
+ * @note Imprime "+ Error: Bid not possible" si la consola no existe, el vendedor es el pujador,
+ * el pujador actual ya era el último pujador, la puja no supera la anterior, o hay overflow.
  */
 void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p, char *consolePrice_p, tList *list) {
     tPosL pos; //Posición del item sobre el que se puja.
@@ -432,6 +456,17 @@ void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p,
  *   - Se imprime el usuario al que se le adjudica la consola y, posteriormente, se elimina la consola de la lista.
  *   - En caso de no existir elemento o pujas se imprimirá un error.
  */
+/**
+ * @brief Procesa el comando 'A' para adjudicar una consola al mayor postor.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in] consoleId_p Identificador de la consola a adjudicar.
+ * @param[in,out] list Lista en la que se encuentra la consola (tList).
+ *
+ * @post Imprime "* Award: console CC bidder UU brand BB price PP" con los datos del ganador.
+ * @post Elimina la consola de la lista tras vaciar su pila de pujas.
+ * @post Imprime "+ Error: Award not possible" si no existe la consola o no hay pujas.
+ */
 void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
     tPosL pos;  //La posición en la lista del item a adjudicar.
     tItemL item;//El item que se quiere adjudicar.
@@ -468,6 +503,19 @@ void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
  *  - Imprime el número total de consolas, la suma de precios y el precio promedio por marca.
     - Imprime la "Top Bid", aquella consola cuyo incremento en precio (original/puja) sea el mayor.
  *  - Imprime '+ Error:' si la lista está vacía.
+ */
+/**
+ * @brief Procesa el comando 'S' para mostrar estadísticas y listado de las consolas registradas.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in] list Lista en la que se guardan los valores (tList).
+ *
+ * @post Imprime por cada consola:
+ *       - "Console CC seller UU brand BB price PP bids II top bidder UU"
+ *       - O ". No bids" si no hay pujas.
+ * @post Imprime un resumen por marca con número de consolas, suma de precios y precio medio.
+ * @post Imprime la "Top bid" con mayor incremento porcentual.
+ * @post Imprime "+ Error: Stats not possible" si la lista está vacía.
  */
 void processStatsCommand(char *commandNumber, tList list) {
     int countNintendo = 0, countSega = 0;       //Contador del número de consolas de la marca.
@@ -523,7 +571,7 @@ void processStatsCommand(char *commandNumber, tList list) {
     avgNintendo = (countNintendo > 0) ? sumNintendo / (float)countNintendo : 0; //cálculo de promedio que evita div/0
     avgSega = (countSega > 0) ? sumSega / (float)countSega : 0;                 //cálculo de promedio que evita div/0
 
-    printf("Brand     Consoles    Price  Average\n");
+    printf("\nBrand     Consoles    Price  Average\n");
     printf("Nintendo  %8d %8.2f %8.2f\n", countNintendo, sumNintendo, avgNintendo);
     printf("Sega      %8d %8.2f %8.2f\n", countSega, sumSega, avgSega);
 
@@ -546,6 +594,16 @@ void processStatsCommand(char *commandNumber, tList list) {
  * PostCD:
  *   - Se eliminan de la lista aquellas consolas que no tengan pujas. En caso de no haber consolas, o que ninguna
  *      esté libre de pujas, se imprimirá un error; de lo contrario se imprimirá que consolas se eliminan.
+ */
+/**
+ * @brief Elimina de la lista aquellas consolas que no tengan ninguna puja.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in,out] list Lista en la que se guardan los valores (tList).
+ *
+ * @post Por cada consola sin pujas, imprime
+ *       "Removing console CC seller UU brand BB price PP bids II" y la elimina de la lista.
+ * @post Imprime "+ Error: Remove not possible" si no hay consolas o ninguna sin pujas.
  */
 void processRemoveCommand(char *commandNumber, tList *list) {
     bool removed = false;     //Auxiliar que lleva registro de si se ha eliminado alguna consola.
@@ -582,7 +640,7 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     }
 
     if (!removed) {
-        printf("* Error: Remove not possible\n");
+        printf("+ Error: Remove not possible\n");
     }
 }
 
@@ -595,6 +653,17 @@ void processRemoveCommand(char *commandNumber, tList *list) {
  * PostCD:
  *  - Se imprime el número total de consolas, la suma de precios y el precio promedio por marca.
  *  - Se imprime '+ Error:' si la lista está vacía.
+ */
+/**
+ * @brief Procesa el comando 'I' para invalidar las consolas con pujas irregulares.
+ *
+ * @param[in] commandNumber Cadena con el número de comando.
+ * @param[in,out] list Lista en la que se guardan los valores (tList).
+ *
+ * @post Calcula el número medio de pujas y define un rango = 2 × media.
+ * @post Para cada consola cuyo bidCounter > rango, vacía su pila y:
+ *       imprime "* InvalidateBids: console CC seller UU brand BB price PP bids II average bids AA".
+ * @post Imprime "+ Error: InvalidateBids not possible" si la lista está vacía o no cumple condición.
  */
 void processInvalidateBidsCommand(char *commandNumber, tList *list) {
     int totalBids = 0, numConsoles = 0; //Auxiliar de tipo contador.
@@ -665,6 +734,23 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
  *
  * (Función proporcionada por la universidad, modificada ligeramente).
  */
+/**
+ * @brief Procesa los comandos recibidos y llama a las funciones correspondientes según el tipo de comando.
+ *
+ * @param[in] commandNumber Cadena con el número de comando recibido.
+ * @param[in] command Carácter que indica el tipo de comando ('N','D','B','A','R','S','I').
+ * @param[in] param1 Primer parámetro del comando (si aplica).
+ * @param[in] param2 Segundo parámetro del comando (si aplica).
+ * @param[in] param3 Tercer parámetro del comando (si aplica).
+ * @param[in] param4 Cuarto parámetro del comando (si aplica).
+ * @param[in,out] list Puntero a la lista donde se aplican las operaciones.
+ *
+ * @pre list debe estar inicializada.
+ * @post Llama a la función processXCommand correspondiente.
+ * @post Si el comando no es reconocido, no realiza ninguna acción.
+ *
+ * @note Función proporcionada por la universidad, modificada ligeramente.
+ */
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
     switch (command) {
         case 'N':
@@ -707,6 +793,20 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
  *
  * (Función proporcionada por la universidad, modificada ligeramente).
  */
+/**
+ * @brief Lee los comandos desde un archivo y los procesa uno por uno.
+ *
+ * @param[in] filename Nombre del archivo que contiene los comandos.
+ * @param[in,out] list Puntero a la lista donde se almacenará la información.
+ *
+ * @pre El archivo debe existir y ser accesible.
+ * @post Se procesan todos los comandos hasta finalizar el archivo.
+ * @post La lista puede quedar modificada por la ejecución de las operaciones.
+ * @post Si el archivo no se encuentra, se muestra un mensaje de error.
+ *
+ * @note Función proporcionada por la universidad, modificada ligeramente.
+ */
+
 void readTasks(char *filename, tList *list) {
 
     FILE *f = NULL;
