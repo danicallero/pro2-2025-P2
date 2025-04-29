@@ -350,15 +350,18 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
  */
 
 void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
+    tPosL pos;   //Posición del item sobre el que se puja.
+    tItemL item; //Item que se elimina.
+
     printf("********************\n");
     printf("%s D: console %s\n", commandNumber, consoleId_p);
 
-    tPosL pos = findItem(consoleId_p, *list); //También actúa como isEmptyList si devuelve LNULL.
+    pos = findItem(consoleId_p, *list); //También actúa como isEmptyList si devuelve LNULL.
     if (pos == LNULL) {
         printf("+ Error: Delete not possible\n"); //No se ha encontrado item o la lista se encuentra vacía.
         return;
     }
-    tItemL item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
+    item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
 
     printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
         consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
@@ -396,11 +399,11 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
  * el pujador actual ya era el último pujador, la puja no supera la anterior, o hay overflow.
  */
 void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p, char *consolePrice_p, tList *list) {
-    tPosL pos; //Posición del item sobre el que se puja.
-    tItemL item; //Item sobre el que se puja.
-    tItemS stackItem; //Elemento de la pila de pujas que guarda los metadatos de la misma.
-    float highestBid; //Valor numérico de la puja más alta (si no hay pujas será el precio original).
-    char *highestBidStr; //String del mayor pujador (si no hay pujas será el vendedor).
+    tPosL pos;          //Posición del item sobre el que se puja.
+    tItemL item;        //Item sobre el que se puja.
+    tItemS stackItem;   //Elemento de la pila de pujas que guarda los metadatos de la misma.
+    float highestBid;   //Valor numérico de la puja más alta (si no hay pujas será el precio original).
+    char *highestBidStr;//String del mayor pujador (si no hay pujas será el vendedor).
     float bidPrice = safeStr2float(consolePrice_p); //Variable precio como float para poder pasarlo al TAD y hacer comparaciones.
 
     printf("********************\n");
@@ -522,10 +525,15 @@ void processStatsCommand(char *commandNumber, tList list) {
     float sumNintendo = 0.0f, sumSega = 0.0f;   //Sumador de la suma de precios de todas las consolas de la marca.
     float avgNintendo, avgSega;                 //Precio medio de las consolas de la marca.
 
-    tPosL pos = first(list); //Posición del elemento para el que se realizarán comprobaciones e impresiones en consola.
-
+    tPosL pos;                //Posición del elemento para el que se realizarán comprobaciones e impresiones en consola.
     tPosL topItemPos = NULL;  //Auxiliar que guarda la posición del item con la mejor puja.
     float maxIncrease = 0.0f; //Auxiliar que guarda el precio del item con la mejor puja.
+
+    float increase;     //Precio de la puja más alta. (para cambiar en cada iteración)
+    float topBid;       //Mayor incremento en precio. (para cambiar en cada iteración)
+
+    tItemL topItem;     //Auxiliar donde se guardará la consola con mayor puja.
+    tItemS topStack;    //Auxiliar donde se guardará la mayor puja.
 
     printf("********************\n");
     printf("%s S\n", commandNumber);
@@ -534,6 +542,8 @@ void processStatsCommand(char *commandNumber, tList list) {
         printf("+ Error: Stats not possible\n"); //La lista se encuentra vacía.
         return;
     }
+
+    pos = first(list);
 
     while (pos != LNULL) { /*Se atraviesa toda la lista hasta llegar al final para calcular # de consolas por marca,
                             *y hacer el listing de todas en consola.
@@ -546,8 +556,8 @@ void processStatsCommand(char *commandNumber, tList list) {
         if (isEmptyStack(item.bidStack)) { //No se han creado pujas.
             printf(". No bids\n");
         } else {
-            float topBid = peek(item.bidStack).consolePrice;
-            float increase = ((topBid - item.consolePrice) / item.consolePrice) * 100.0f;
+            topBid = peek(item.bidStack).consolePrice;
+            increase = ((topBid - item.consolePrice) / item.consolePrice) * 100.0f;
 
             if (increase > maxIncrease) {
                 maxIncrease = increase;
@@ -576,11 +586,11 @@ void processStatsCommand(char *commandNumber, tList list) {
     printf("Sega      %8d %8.2f %8.2f\n", countSega, sumSega, avgSega);
 
     if (topItemPos != NULL) {
-        tItemL topItem = getItem(topItemPos, list);
-        tItemS topBid = peek(topItem.bidStack);
+        topItem = getItem(topItemPos, list);
+        topStack = peek(topItem.bidStack);
         printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
             topItem.consoleId, topItem.seller, consoleBrand2String(topItem.consoleBrand), topItem.consolePrice,
-            topBid.bidder, topBid.consolePrice, maxIncrease);
+            topStack.bidder, topStack.consolePrice, maxIncrease);
     } else {
         printf("Top bid not possible\n");
     }
