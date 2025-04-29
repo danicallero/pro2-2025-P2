@@ -607,7 +607,7 @@ void processStatsCommand(char *commandNumber, tList list) {
  */
 void processRemoveCommand(char *commandNumber, tList *list) {
     bool removed = false;     //Auxiliar que lleva registro de si se ha eliminado alguna consola.
-    tPosL pos = first(*list); //Posición del elemento para el que se realizarán comprobaciones.
+    tPosL pos;                //Posición del elemento para el que se realizarán comprobaciones.
     tItemL item;              //El item que se quiere comprobar.
     tPosL nextPos;            //La posición siguiente al item que se quiere comprobar.
 
@@ -618,6 +618,8 @@ void processRemoveCommand(char *commandNumber, tList *list) {
         printf("+ Error: Remove not possible\n"); //list is empty
         return;
     }
+
+    pos = first(*list);     //Llamamos a first después de comprobar que la lista no esté vacía, por la preCD.
 
     while (pos != LNULL) { /*Atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y
                             *hacer el listing de todas en consola.
