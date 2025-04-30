@@ -204,15 +204,22 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
     const char *consolePrice_p, tList *list) {
     tItemL newItem;         //Elemento item que se rellenará con la información del item a insertar.
     tPosL pos;              //La posición en la lista del item a insertar.
-    tConsoleBrand brand;                              //Variable donde se guarda la conversión de string a enum.
-    float priceFloat = safeStr2float(consolePrice_p); //Variable precio transformado a float para poder pasarlo al TAD.
+    tConsoleBrand brand;    //Variable donde se guarda la conversión de string a enum.
+    float priceFloat;       //Variable precio transformado a float para poder pasarlo al TAD.
+
+    //Se asegura que el código no se rompa si faltan parámetros.
+    if ( !consoleId_p || !sellerId_p || !consoleBrand_p || !consolePrice_p || !list) {
+        printf("%s N\n+ Error: New not possible\n",commandNumber);
+        return;
+    }
+    priceFloat = safeStr2float(consolePrice_p);
 
     printf("********************\n");
     printf("%s N: console %s seller %s brand %s price %.2f\n", commandNumber, consoleId_p, sellerId_p, consoleBrand_p,
         priceFloat);
 
     if (priceFloat < 0) { //Error en conversión (o han se ha introducido un precio negativo).
-        printf("+ Error: Invalid price value\n");
+        printf("+ Error: New not possible. Invalid price value\n");
         return;
     }
 
@@ -296,7 +303,14 @@ void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p,
     tItemS stackItem;   //Elemento de la pila de pujas que guarda los metadatos de la misma.
     float highestBid;   //Valor numérico de la puja más alta (si no hay pujas será el precio original).
     char *highestBidStr;//String del mayor pujador (si no hay pujas será el vendedor).
-    float bidPrice = safeStr2float(consolePrice_p); //Variable precio como float para poder pasarlo al TAD y hacer comparaciones.
+    float bidPrice;     //Variable precio como float para poder pasarlo al TAD y hacer comparaciones.
+
+    //Se asegura que el código no se rompa si faltan parámetros.
+    if (!bidderId_p || !consolePrice_p || !list) {
+        printf("%s B\n+ Error: Bid not possible\n", commandNumber);
+        return;
+    }
+    bidPrice = safeStr2float(consolePrice_p);
 
     printf("********************\n");
     printf("%s B: console %s bidder %s price %.2f\n", commandNumber, consoleId_p, bidderId_p, bidPrice);
@@ -504,6 +518,7 @@ void processRemoveCommand(char *commandNumber, tList *list) {
                 consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
 
             handleDeleteConsole(pos, &item, list);
+
         } else { /*Al borrar un elemento de la lista, el nodo posterior pasa a ser el nodo eliminado. Si se invalidara
                   * el penúltimo nodo, next daría bad access. Además, si se actualizase a next tras eliminar,
                   * la siguiente consola no se eliminaría.
@@ -592,6 +607,7 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
  * @param[in,out] list Puntero a la lista donde se aplican las operaciones.
  *
  * @pre list debe estar inicializada.
+ *
  * @post Llama a la función processXCommand correspondiente.
  * @post Si el comando no es reconocido, no realiza ninguna acción.
  *
@@ -632,6 +648,8 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
  * @param[in,out] list Puntero a la lista donde se almacenará la información.
  *
  * @pre El archivo debe existir y ser accesible.
+ * @pre Los comandos deben estar precedidos de su respectivo número de comando.
+ *
  * @post Se procesan todos los comandos hasta finalizar el archivo.
  * @post La lista puede quedar modificada por la ejecución de las operaciones.
  * @post Si el archivo no se encuentra, se muestra un mensaje de error.
