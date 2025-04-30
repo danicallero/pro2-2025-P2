@@ -18,9 +18,19 @@
  * @brief Gestión de plataforma de pujas de consolas.
  *
  * @note
- * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
- * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
- * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ * Esta práctica está comentada en formato Doxygen (/** ... * /), pero se puede ignorar si no se utiliza un IDE con
+ * soporte o no se tiene Doxygen instalado.
+ */
+
+/*
+ * Como guía rápida en caso de no conocer la notación doxygen:
+ * @brief:          Breve descripción de la función.
+ * @param:          Parámetros: [in] (entrada), [out] (salida), [in,out] (entrada y salida).
+ * @return/retval:  Valor devuelto (si existe).
+ * @pre:            Precondiciones necesarias antes de ejecutar la función.
+ * @post:           Cambios garantizados después de la ejecución.
+ * @attention:      Avisos importantes sobre el uso de la función.
+ * @remark/note:    Información adicional relevante.
  */
 
 /**
@@ -28,14 +38,6 @@
  */
 #define MAX_BUFFER 255
 
-
-/* Especificación:
- * Objetivo: Transforma un valor tConsoleBrand a una cadena de caracteres equivalente.
- * Entrada:
- *  - brand: Valor enum de tipo tConsoleBrand.
- * Salida:
- *  - string: Cadena de caracteres equivalente al tConsoleBrand dado, o "unknown" si se ha pasado otro enum.
- */
 /**
  * @brief Transforma un valor tConsoleBrand a una cadena de caracteres equivalente.
  *
@@ -51,16 +53,6 @@ char *consoleBrand2String(const tConsoleBrand brand) {
     }
 }
 
-/* Especificación:
- * Objetivo: Transforma las mayúsculas de un string a minúsculas.
- * Entrada:
- *  - str: Puntero a un string.
- * PreCD:
- *  - El puntero 'str' debe apuntar a un string válido.
- * PosCD:
- *  - El string se modifica y ya no contiene mayúsculas.
- * WARNING: Esta función modifica 'str' diréctamente, NO devuelve un duplicado.
- */
 /**
  * @brief Transforma las mayúsculas de un string a minúsculas.
  *
@@ -81,18 +73,6 @@ void toLower(char *str) {
     }
 }
 
-/* Especificación:
- * Objetivo: Transforma una cadena de caracteres en su valor equivalente del enum tConsoleBrand.
- * Entrada:
- *  - source: Cadena que representa una marca.
- *  - dest: Puntero a una variable de tipo tConsoleBrand donde se almacenará el valor del enum.
- * Salida:
- *  - La función devuelve true si la marca existe entre los datos del enum tConsoleBrand (types.h), false si no.
- * PosCD:
- *  - La cadena 'source' se convierte a minúsculas al llamar a la función.
- *  - Si la función devuelve true, 'dest' cambiará su valor y contendrá el valor correspondiente del enum tConsoleBrand.
- *  WARNING: Llamar a esta función transformará el string 'source' que se le pase a minúsculas.
- */
 /**
  * @brief Transforma una cadena de caracteres en su valor equivalente del enum tConsoleBrand.
  *
@@ -122,13 +102,6 @@ bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
     return out;
 }
 
-/* Especificación:
- * Objetivo: Transforma de forma segura un valor de tipo string a float.
- * Entrada:
- *  - str: Puntero al string que se quiere transformar.
- * Salida:
- *  - El string transformado a float o -1.0f en caso de fallo en la conversión.
- */
 /**
  * @brief Transforma de forma segura un valor de tipo string a float.
  *
@@ -148,15 +121,6 @@ float safeStr2float(const char *str) {
     return value;
 }
 
-/* Especificación
- * Objetivo: Vacía los contenidos de una pila tStack.
- * Entrada:
- *  - stack: Puntero a la pila tStack que se quiere vaciar.
- * PreCD:
- *  - El puntero debe apuntar a una pila inicializada.
- * PosCD:
- *  - La pila queda vaciada.
- */
 /**
  * @brief Vacía los contenidos de una pila tStack.
  *
@@ -171,22 +135,6 @@ void clearStack(tStack *stack) {
     }
 }
 
-/* Especificación
- * Objetivo: Gestiona de forma unificada la eliminación de consolas cumpliendo con la precondición de vaciar la pila de
- * pujas previamente.
- *
- * Entradas:
- *  - pos: Posición tPosL del elemento que se quiere eliminar.
- *  - item: Puntero al tItemL que se encuentra en la tPosL 'pos'.
- *  - list: Puntero a la lista en la que se encuentra el item.
- * PreCD:
- *  - La lista debe apuntar a una tList inicializada.
- *  - La posición debe ser una posición válida que contenga un elemento de la lista.
- *  - El puntero item debe apuntar al tItemL que se encuentra en la posición 'pos'.
- * PosCD:
- *  - La pila de pujas del elemento 'item' queda vaciada.
- *  - El elemento 'item' se elimina de la lista, y como consecuencia otros elementos pueden haber sido desplazados.
- */
 /**
  * @brief Gestiona de forma unificada la eliminación de consolas cumpliendo con la precondición de vaciar la pila de
  * pujas previamente.
@@ -208,17 +156,6 @@ void handleDeleteConsole(tPosL pos, tItemL *item, tList *list) {
     deleteAtPosition(pos, list);
 }
 
-/* Especificación
- * Objetivo: Copia de forma segura una cadena de caracteres de un string de origen a otro de destino, asegurando que no
- * se produzca overflow y avisando de posibles errores.
- * Entradas:
- *  - dest: Puntero al de destino, que se sobreescribirá con los contenidos de 'src'.
- *  - src: Puntero al string de origen. No se modifica.
- *  - size: Valor de tipo size_t. Tamaño máximo del string incluyendo la terminación '\0'.
- *  - label: Nombre descriptivo del string que se imprimirá en el mensaje de error.
- * Salida:
- *  - La función devuelve true en caso de que se haya copiado con éxito, false en caso contrario.
- */
 /**
  * @brief Copia de forma segura una cadena de caracteres de un string de origen a otro de destino, asegurando que no se
  * produzca overflow y avisando de posibles errores.
@@ -246,25 +183,6 @@ bool safeStrCpy(char *dest, const char *src, const size_t size, const char *labe
     return out;
 }
 
-
-/* Especificación:
- * Objetivo: Procesar el comando 'N' para añadir una nueva consola a la lista.
- * Entradas:
- *  - commandNumber: Cadena de caracteres que contiene el número de comando. Este valor solo ayuda a mantener
- * registro de la petición, no tiene otro uso.
- *  - consoleId_p: Cadena que contiene el identificador de la consola a insertar.
- *  - sellerId_p: Cadena que contiene el identificador del vendedor.
- *  - consoleBrand_p: Cadena que representa la marca de la consola.
- *  - consolePrice_p:Cadena que representa el precio de la consola.
- *  - list: Puntero a la lista donde se guardará el item.
- *
- * PostCD:
- *  - Se imprime el resultado y modifica la lista si el comando es válido.
- *  - Se imprime '+ Error:' seguido de una explicación en caso de fallo.
- *
- * Nota: No permite la inserción de duplicados, cadenas de caracteres con strings de longitud inválida, y evita errores
- * básicos.
- */
 /**
  * @brief Procesa el comando 'N' para añadir una nueva consola en una lista tList.
  *
@@ -327,17 +245,6 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
         printf("+ Error: New not possible\n"); //Se produjo un fallo en el back del TAD.
 }
 
-/* Especificación:
- * Objetivo: Procesa el comando 'D' para eliminar una consola de la lista.
- * Entradas:
- *  - commandNumber: Número de comando.
- *  - consoleId_p: consoleId.
- *  - list: Lista en la que se encuentra la consola (tList).
- *
- * PostCD:
- *  - Imprime el resultado y modifica la lista si el comando es válido.
- *  - Imprime Error si el elemento no se encuentra.
- */
 /**
  * @brief Procesa el comando 'D' para eliminar una consola de la lista.
  *
@@ -370,21 +277,6 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
 
 }
 
-/* Especificación:
- * Objetivo: Procesa el comando 'B' para realizar una puja sobre una consola existente.
- * Entradas:
- *  - commandNumber: Número de comando.
- *  - consoleId_p: consoleId.
- *  - bidderId_p: pujador (bidder).
- *  - consolePrice_p: puja (consolePrice).
- *  - list: Lista en la que se guardan los valores (tList).
- *
- * PostCD:
- *  - Se imprime el resultado y se actualiza el precio y contador de pujas si la puja es válida.
- * Nota:
- *  - Se imprime '+ Error:' si la consola no existe, el vendedor es el pujador, el mayor pujador es el pujador, o el
- *      precio de puja es inferior al mayor precio listado.
- */
 /**
  * @brief Procesa el comando 'B' para realizar una puja sobre una consola existente.
  *
@@ -449,16 +341,6 @@ void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p,
         consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
 }
 
-/*Especificación:
- *  Objetivo: Procesa el comando 'A' para adjudicar una consola al mayor postor
- * Entradas:
- *   - commandNumber: Número de comando.
- *   - consoleId_p: consoleId de la consola sobre la que se puja.
- *   - list: Lista en la que se encuentra la consola (tList).
- * PostCD:
- *   - Se imprime el usuario al que se le adjudica la consola y, posteriormente, se elimina la consola de la lista.
- *   - En caso de no existir elemento o pujas se imprimirá un error.
- */
 /**
  * @brief Procesa el comando 'A' para adjudicar una consola al mayor postor.
  *
@@ -495,18 +377,6 @@ void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
     }
 }
 
-/* Especificación:
- * Objetivo: Procesa el comando 'S' para mostrar estadísticas y listing de las consolas registradas.
- * Entradas:
- *   - commandNumber: Número de comando.
- *   - list: Lista en la que se guardan los valores (tList).
- *
- * PostCD:
- *  - Imprime una lista con todas las consolas, junto con su mayor pujador (No bids en caso de no tener ninguna).
- *  - Imprime el número total de consolas, la suma de precios y el precio promedio por marca.
-    - Imprime la "Top Bid", aquella consola cuyo incremento en precio (original/puja) sea el mayor.
- *  - Imprime '+ Error:' si la lista está vacía.
- */
 /**
  * @brief Procesa el comando 'S' para mostrar estadísticas y listado de las consolas registradas.
  *
@@ -596,15 +466,6 @@ void processStatsCommand(char *commandNumber, tList list) {
     }
 }
 
-/* Especificación:
- * Objetivo: Eliminar de la lista aquellas consolas que no tengan ninguna puja.
- * Entradas:
- *   - commandNumber: Número de comando.
- *   - list: Lista en la que se guardan los valores (tList).
- * PostCD:
- *   - Se eliminan de la lista aquellas consolas que no tengan pujas. En caso de no haber consolas, o que ninguna
- *      esté libre de pujas, se imprimirá un error; de lo contrario se imprimirá que consolas se eliminan.
- */
 /**
  * @brief Elimina de la lista aquellas consolas que no tengan ninguna puja.
  *
@@ -625,7 +486,7 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     printf("%s R\n", commandNumber);
 
     if (isEmptyList(*list)) {
-        printf("+ Error: Remove not possible\n"); //list is empty
+        printf("+ Error: Remove not possible\n");
         return;
     }
 
@@ -656,16 +517,6 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     }
 }
 
-/* Especificación:
- * Objetivo: Procesar el comando 'I' para invalidar las consolas con pujas irregulares.
- * Entradas:
- *   - commandNumber: Número de comando.
- *   - list: Lista en la que se guardan los valores (tList).
- *
- * PostCD:
- *  - Se imprime el número total de consolas, la suma de precios y el precio promedio por marca.
- *  - Se imprime '+ Error:' si la lista está vacía.
- */
 /**
  * @brief Procesa el comando 'I' para invalidar las consolas con pujas irregulares.
  *
@@ -729,23 +580,6 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
     }
 }
 
-/* Especificación:
- * Objetivo: Procesar los comandos recibidos y llamar a las funciones correspondientes según el tipo de comando.
- * Entradas:
- *   - commandNumber: Número del comando recibido.
- *   - command: Tipo de comando.
- *   - param1, param2, param3, param4: parámetros necesarios según el comando.
- *   - list: Puntero a la lista donde se aplican las operaciones.
- *
- * PreCD:
- *   - La lista debe estar declarada e inicializada.
- *
- * PostCD:
- *   - Llama a la función correspondiente según el comando recibido, que puede, según proceda, modificar la lista.
- *   - Si el comando no es reconocido, no se realiza ninguna acción.
- *
- * (Función proporcionada por la universidad, modificada ligeramente).
- */
 /**
  * @brief Procesa los comandos recibidos y llama a las funciones correspondientes según el tipo de comando.
  *
@@ -791,20 +625,6 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
     }
 }
 
-/* Especificación:
- * Objetivo: Leer los comandos desde un archivo y procesarlos uno por uno.
- * Entradas:
- *   - filename: Nombre del archivo que contiene los comandos.
- *   - list: Puntero a la lista donde se almacenará la información.
- *
- * PreCD:
- *   - El archivo debe existir y ser accesible.
- * PostCD:
- *   - Se procesan todos los comandos hasta finalizar el archivo, y la lista puede quedar modificada por su ejecución.
- *   - Si el archivo no se encuentra, se muestra un error.
- *
- * (Función proporcionada por la universidad, modificada ligeramente).
- */
 /**
  * @brief Lee los comandos desde un archivo y los procesa uno por uno.
  *

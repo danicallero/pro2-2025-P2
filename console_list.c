@@ -17,9 +17,19 @@
  * @brief Gestión del TAD Lista dinámica ordenada de consolas.
  *
  * @note
- * Este código contiene especificaciones tanto en formato tradicional como en formato Doxygen.
- * El contenido de ambas es equivalente, y se ha mantenido el formato clásico como extra
- * para facilitar la corrección manual o en IDEs sin soporte para Doxygen.
+ * Esta práctica está comentada en formato Doxygen (/** ... * /), pero se puede ignorar si no se utiliza un IDE con
+ * soporte o no se tiene Doxygen instalado.
+ */
+
+/*
+ * Como guía rápida en caso de no conocer la notación doxygen:
+ * @brief:          Breve descripción de la función.
+ * @param:          Parámetros: [in] (entrada), [out] (salida), [in,out] (entrada y salida).
+ * @return/retval:  Valor devuelto (si existe).
+ * @pre:            Precondiciones necesarias antes de ejecutar la función.
+ * @post:           Cambios garantizados después de la ejecución.
+ * @attention:      Avisos importantes sobre el uso de la función.
+ * @remark/note:    Información adicional relevante.
  */
 
 void createEmptyList(tList *L) {
@@ -27,14 +37,6 @@ void createEmptyList(tList *L) {
 }
 
 //Función auxiliar para aislar la reserva de memoria para nodos.
-/* Objetivo: asignar un espacio en la memoria para un nodo.
- * Entradas:
- *   - *p: puntero a una posición.
- * Salida:
- *    - Devuelve true si hay espacio en memoria y un espacio en ella queda asignado al nodo, false en caso contrario.
- * Postcondiciónes:
- *    - El puntero '*p' apunta a un nuevo nodo con espacio reservado en memoria si la función ha devuelto true.
- */
 /**
  * @brief Asigna memoria dinámicamente para un nuevo nodo.
  *
