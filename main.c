@@ -2,7 +2,6 @@
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
  * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * AUTHOR 2: ***************************** LOGIN 2: **********
  * GROUP: 3.3
  * DATE: 26 / 03 / 25
  */
@@ -107,8 +106,7 @@ bool string2ConsoleBrand(char *source, tConsoleBrand *dest) {
  *
  * @param[in] str Puntero al string que se quiere transformar.
  *
- * @retval float que contiene el valor representado por el string pasado, o
- * @retval float con valor -1.0f en caso de error.
+ * @return Valor float del string si es válido, -1.0f si hay error de formato.
  */
 float safeStr2float(const char *str) {
     char *endptr; //Variable donde 'strtof' guarda el último puntero del string.
@@ -294,7 +292,7 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
  * @param[in,out] list Lista en la que se guardan los valores (tList).
  *
  * @post Se imprime el resultado y se actualiza el precio y contador de pujas si la puja es válida.
- * @note Imprime "+ Error: Bid not possible" si la consola no existe, el vendedor es el pujador,
+ * @post Se imprime "+ Error: Bid not possible" si la consola no existe, el vendedor es el pujador,
  * el pujador actual ya era el último pujador, la puja no supera la anterior, o hay overflow.
  */
 void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p, char *consolePrice_p, tList *list) {
@@ -399,9 +397,9 @@ void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
  *
  * @post Imprime por cada consola:
  *       - "Console CC seller UU brand BB price PP bids II top bidder UU"
- *       - O ". No bids" si no hay pujas.
+ *       - O "Console CC seller UU brand BB price PP. No bids" si no hay pujas.
  * @post Imprime un resumen por marca con número de consolas, suma de precios y precio medio.
- * @post Imprime la "Top bid" con mayor incremento porcentual.
+ * @post Imprime la "Top bid", la que muestra mayor incremento porcentual.
  * @post Imprime "+ Error: Stats not possible" si la lista está vacía.
  */
 void processStatsCommand(char *commandNumber, tList list) {
@@ -486,8 +484,8 @@ void processStatsCommand(char *commandNumber, tList list) {
  * @param[in] commandNumber Cadena con el número de comando.
  * @param[in,out] list Lista en la que se guardan los valores (tList).
  *
- * @post Por cada consola sin pujas, imprime
- *       "Removing console CC seller UU brand BB price PP bids II" y la elimina de la lista.
+ * @post Por cada consola sin pujas, imprime "Removing console CC seller UU brand BB price PP bids II" y la elimina de
+ *       la lista.
  * @post Imprime "+ Error: Remove not possible" si no hay consolas o ninguna sin pujas.
  */
 void processRemoveCommand(char *commandNumber, tList *list) {
@@ -538,9 +536,9 @@ void processRemoveCommand(char *commandNumber, tList *list) {
  * @param[in] commandNumber Cadena con el número de comando.
  * @param[in,out] list Lista en la que se guardan los valores (tList).
  *
- * @post Calcula el número medio de pujas y define un rango = 2 × media.
- * @post Para cada consola cuyo bidCounter > rango, vacía su pila y:
- *       imprime "* InvalidateBids: console CC seller UU brand BB price PP bids II average bids AA".
+ * @post Calcula el número medio de pujas y define un rango = 2 × media. Se eliminarán las consolas cuyo contador exceda
+ *       el rango se eliminarán, mostrando el siguiente mensaje para cada consola eliminada:
+ *       "* InvalidateBids: console CC seller UU brand BB price PP bids II average bids AA".
  * @post Imprime "+ Error: InvalidateBids not possible" si la lista está vacía o no cumple condición.
  */
 void processInvalidateBidsCommand(char *commandNumber, tList *list) {

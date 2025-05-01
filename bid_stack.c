@@ -2,7 +2,6 @@
 * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
  * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * AUTHOR 2: Yago Regueiro Piera LOGIN 2: y.regueiro.piera@udc.es
  * GROUP: 3.3
  * DATE: 25 / 03 / 25
  */

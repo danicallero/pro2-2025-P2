@@ -2,7 +2,6 @@
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
  * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * AUTHOR 2: Yago Regueiro Piera LOGIN 2: y.regueiro.piera@udc.es
  * GROUP: 3.3
  * DATE: 25 / 03 / 25
  */
@@ -88,6 +87,8 @@ bool insertItem(const tItemL data_d, tList *L) {
 }
 
 void deleteAtPosition(tPosL p, tList *L) {
+    tPosL pos; //Posición auxiliar.
+
     if (!isEmptyList(*L) && p != LNULL) {
         if (p == *L) {
             // Caso 1: Eliminando el primer nodo.
@@ -95,7 +96,7 @@ void deleteAtPosition(tPosL p, tList *L) {
             free(p);
         } else if (p->next == LNULL) {
             // Caso 2: Eliminando el último nodo.
-            tPosL pos = *L;
+            pos = *L;
             while (pos->next != LNULL && pos->next != p) {
                 pos = pos->next;
             }
@@ -104,11 +105,18 @@ void deleteAtPosition(tPosL p, tList *L) {
                 free(p);
             }
         } else {
-            // Caso 3: Eliminando un nodo intermedio.
-            tPosL q = p->next;
-            p->data = q->data;
-            p->next = q->next;
-            free(q);
+            // Caso 3: Eliminando un nodo intermedio. (aliasing)
+            /* Realmente estamos eliminando el nodo posterior, haciéndolo así rompemos un poco la relación de punteros.
+             * Lo hago así porque en la P1 se me penalizó por hacer un traversal para encontrar el nodo anterior.
+             * Sin embargo, este enfoque altera el comportamiento esperado respecto a una lista estática y reduce la
+             * transparencia del diseño. Además, ha obligado a refactorizar la función remove en main.c, ya que puede
+             * provocar accesos inválidos si se almacena y reutiliza next(p) tras llamar a deleteAtPosition().
+             */
+
+            pos = p->next;
+            p->data = pos->data; //Se copian los datos del siguiente nodo.
+            p->next = pos->next; //Se copia el puntero del next del siguiente nodo.
+            free(pos);  //Se libera la memoria del siguiente nodo
         }
     }
 }
@@ -130,10 +138,10 @@ void updateItem(tItemL d, tPosL p, tList *L) {  /*Al igual que en getItem, tList
 tPosL findItem(tConsoleId id, tList L) {
     tPosL p; //Auxiliar donde se guarda el nodo que se comprueba en la iteración actual.
 
-    for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) { /*Se atraviesa hasta encontrar una coincidencia,
-                                                                                  *o consoleId es mayor que el del parámetro pasado.
-                                                                                  *En el peor de los casos la función es O(n).
-                                                                                  */
+    /* Se atraviesa hasta encontrar una coincidencia, o consoleId es mayor que el del parámetro pasado. En el peor de
+     * los casos la función es O(n).
+     */
+    for (p = L; p != LNULL && strcmp(p->data.consoleId, id) <= 0; p = p->next) {
         if (strcmp(p->data.consoleId, id) == 0) return p;
     }
     return LNULL;
@@ -154,9 +162,11 @@ tPosL previous(tPosL p, tList L) {
     tPosL out = LNULL; //Auxiliar donde se recoge el output que devolverá return. LNULL por defecto.
     tList prev; //Auxiliar que mantendrá registro del nodo anterior a current.
 
-    if (p != L) { //Si 'p' es igual que 'L', 'p' es el nodo del primer elemento y no tiene previo ('L' es el primer nodo de la lista por definición).
-        prev = L; //Auxiliar que mantendrá registro del nodo anterior a current.
-        while (prev->next != LNULL && prev->next != p) { //Se atraviesa hasta encontrar un nodo cuyo siguiente sea el enviado, o el final.
+    //Si 'p' es igual que 'L', 'p' es el nodo del primer elemento y no tiene previo ('L' es el primer nodo de la lista por definición).
+    if (p != L) {
+        prev = L;
+        while (prev->next != LNULL && prev->next != p) {
+            //Se atraviesa hasta encontrar un nodo cuyo siguiente sea el enviado, o el final.
             prev = prev->next;
         }
         out = prev->next == p ? prev : LNULL; //Si siguiente al que se ha encontrado es 'p', 'prev' es el que se busca.
