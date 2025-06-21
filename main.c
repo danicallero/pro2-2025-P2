@@ -1,9 +1,9 @@
-/*
- * TITLE: PROGRAMMING II LABS
- * SUBTITLE: Practical 2
- * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * GROUP: 3.3
- * DATE: 26 / 03 / 25
+/**
+ * @file main.c
+ * @brief Gestión de plataforma de pujas de consolas.
+ * @date 26/03/2025
+ *
+ * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
  */
 
 #include <stdio.h>
@@ -11,13 +11,6 @@
 
 #include "types.h"
 #include "console_list.h"
-
-/**
- * @file main.c
- * @brief Gestión de plataforma de pujas de consolas.
- *
- * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
- */
 
 /**
  * @brief Número máximo de caracteres por línea en el archivo de entrada.
@@ -186,55 +179,46 @@ bool safeStrCpy(char *dest, const char *src, const size_t size, const char *labe
  * básicos.
  */
 void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p, char *consoleBrand_p,
-    const char *consolePrice_p, tList *list) {
-    tItemL newItem;         //Elemento item que se rellenará con la información del item a insertar.
-    tPosL pos;              //La posición en la lista del item a insertar.
-    tConsoleBrand brand;    //Variable donde se guarda la conversión de string a enum.
-    float priceFloat;       //Variable precio transformado a float para poder pasarlo al TAD.
+                       const char *consolePrice_p, tList *list) {
+    tItemL newItem; //Elemento item que se rellenará con la información del item a insertar.
+    tPosL pos; //La posición en la lista del item a insertar.
+    tConsoleBrand brand; //Variable donde se guarda la conversión de string a enum.
+    float priceFloat; //Variable precio transformado a float para poder pasarlo al TAD.
 
     //Se asegura que el código no se rompa si faltan parámetros.
-    if ( !consoleId_p || !sellerId_p || !consoleBrand_p || !consolePrice_p || !list) {
-        printf("%s N\n+ Error: New not possible\n",commandNumber);
+    if (!consoleId_p || !sellerId_p || !consoleBrand_p || !consolePrice_p || !list) {
+        printf("%s N\n+ Error: New not possible\n", commandNumber);
         return;
     }
     priceFloat = safeStr2float(consolePrice_p);
 
-    printf("********************\n");
     printf("%s N: console %s seller %s brand %s price %.2f\n", commandNumber, consoleId_p, sellerId_p, consoleBrand_p,
-        priceFloat);
+           priceFloat);
 
-    if (priceFloat < 0) { //Error en conversión (o han se ha introducido un precio negativo).
-        printf("+ Error: New not possible. Invalid price value\n");
-        return;
+
+    pos = findItem(consoleId_p, *list);
+    if (pos == LNULL && priceFloat >= 0) {
+        if (safeStrCpy(newItem.consoleId, consoleId_p, NAME_LENGTH_LIMIT, "ConsoleId") &&
+            safeStrCpy(newItem.seller, sellerId_p, NAME_LENGTH_LIMIT, "SellerId") &&
+            string2ConsoleBrand(consoleBrand_p, &brand)) {
+
+            newItem.consoleBrand = brand;
+            newItem.consolePrice = priceFloat;
+            newItem.bidCounter = 0;
+            createEmptyStack(&newItem.bidStack); //El stack se inicializa como vacío.
+
+            if (insertItem(newItem, list)) {
+                printf("* New: console %s seller %s brand %s price %.2f\n", newItem.consoleId, newItem.seller,
+                       consoleBrand_p,
+                       newItem.consolePrice);
+            } else
+                printf("+ Error: New not possible\n"); //Se produjo un fallo en el TAD.
+        } else {
+            printf("+ Error: New not possible\n"); //fallo en manipulación de strings.
+        }
+    } else {
+        printf("+ Error: New not possible\n"); //elemento duplicado o precio negativo.
     }
-
-    pos = findItem(consoleId_p, *list); //findItem devuelve LNULL en listas vacías.
-    if (pos != LNULL) { //Control de duplicados.
-        printf("+ Error: New not possible\n"); //El item ya existe.
-        return;
-    }
-
-    if (!safeStrCpy(newItem.consoleId, consoleId_p, NAME_LENGTH_LIMIT, "ConsoleId") ||
-        !safeStrCpy(newItem.seller, sellerId_p, NAME_LENGTH_LIMIT, "SellerId")) {
-        printf("+ Error: New not possible\n"); //Hubo un error, la función safeStrCpy imprime más detalle.
-        return;
-    }
-
-    if (!string2ConsoleBrand(consoleBrand_p, &brand)) { //¡¡¡Sé que source se pasa a minúsculas, es a propósito!!!
-        printf("+ Error: New not possible\n"); //La marca no es válida.
-        return;
-    }
-
-    newItem.consoleBrand = brand;
-    newItem.consolePrice = priceFloat;
-    newItem.bidCounter = 0;
-    createEmptyStack(&newItem.bidStack); //El stack se inicializa como vacío.
-
-    if (insertItem(newItem, list)) {
-        printf("* New: console %s seller %s brand %s price %.2f\n", newItem.consoleId, newItem.seller, consoleBrand_p,
-            newItem.consolePrice);
-    } else
-        printf("+ Error: New not possible\n"); //Se produjo un fallo en el back del TAD.
 }
 
 /**
@@ -252,21 +236,19 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
     tPosL pos;   //Posición del item sobre el que se puja.
     tItemL item; //Item que se elimina.
 
-    printf("********************\n");
     printf("%s D: console %s\n", commandNumber, consoleId_p);
 
     pos = findItem(consoleId_p, *list); //También actúa como isEmptyList si devuelve LNULL.
-    if (pos == LNULL) {
+    if (pos != LNULL) {
+        item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
+
+        printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
+            consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
+
+        handleDeleteConsole(pos, &item, list);
+    } else {
         printf("+ Error: Delete not possible\n"); //No se ha encontrado item o la lista se encuentra vacía.
-        return;
     }
-    item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
-
-    printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
-        consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
-
-    handleDeleteConsole(pos, &item, list);
-
 }
 
 /**
@@ -296,48 +278,43 @@ void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p,
         return;
     }
     bidPrice = safeStr2float(consolePrice_p);
+    pos = findItem(consoleId_p, *list);
 
-    printf("********************\n");
     printf("%s B: console %s bidder %s price %.2f\n", commandNumber, consoleId_p, bidderId_p, bidPrice);
 
-    if (bidPrice < 0 || isEmptyList(*list)) { //Error en conversión (o han se ha introducido un precio negativo).
-        printf("+ Error: Bid not possible\n");
-        return;
-    }
+    if (bidPrice >= 0 && pos != LNULL) {
+        item = getItem(pos, *list);
 
-    pos = findItem(consoleId_p, *list);
-    if (pos == LNULL) { //No se ha encontrado el item o la lista está vacía.
-        printf("+ Error: Bid not possible\n");
-        return;
-    }
+        //Los operadores ternarios permiten operar siempre las comprobaciones, independientemente de si existen pujas o no.
+        stackItem = isEmptyStack(item.bidStack) ? (tItemS){.consolePrice = -1, .bidder = ""} : peek(item.bidStack);
+        highestBid = (stackItem.consolePrice == -1) ? item.consolePrice : stackItem.consolePrice;
+        highestBidStr = (stackItem.consolePrice == -1) ? item.seller : stackItem.bidder;
 
-    item = getItem(pos, *list);
-    //Los operadores ternarios permiten operar siempre las comprobaciones, independientemente de si existen pujas o no.
-    stackItem = isEmptyStack(item.bidStack) ? (tItemS){.consolePrice = -1, .bidder = ""} : peek(item.bidStack);
-    highestBid = (stackItem.consolePrice == -1) ? item.consolePrice : stackItem.consolePrice;
-    highestBidStr = (stackItem.consolePrice == -1) ? item.seller : stackItem.bidder;
+        if (strcmp(highestBidStr, bidderId_p) == 0 || strcmp(item.seller, bidderId_p) == 0 || bidPrice <= highestBid) {
+            //El vendedor de un item, o el pujador actual, no puede pujar en su propio item.
+            printf("+ Error: Bid not possible\n");
 
-    if (strcmp(highestBidStr, bidderId_p) == 0 || strcmp(item.seller, bidderId_p) == 0 ||
-        bidPrice <= highestBid) { //El vendedor de un item, o el pujador actual, no puede pujar en su propio item.
-        printf("+ Error: Bid not possible\n");
-        return;
-    }
+        } else {
+            if (!safeStrCpy(stackItem.bidder, bidderId_p, NAME_LENGTH_LIMIT, "BidderId")) {
+                printf("+ Error: Bid not possible\n");
+            } else {
+                stackItem.consolePrice = bidPrice;
 
-    if (!safeStrCpy(stackItem.bidder, bidderId_p, NAME_LENGTH_LIMIT, "BidderId")) {
-        printf("+ Error: Bid not possible\n");
-        return; //Fallo en StrCpy, seguramente sea un problema de overflow.
-    }
-    stackItem.consolePrice = bidPrice;
+                if (push(stackItem, &item.bidStack)) {
+                    item.bidCounter++;
+                    updateItem(item, pos, list);
+                } else {
+                    printf("+ Error: Bid not possible\n");
+                }
 
-    if (push(stackItem, &item.bidStack)) {
-        item.bidCounter++;
-        updateItem(item, pos, list);
+                printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n", item.consoleId, stackItem.bidder,
+                    consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
+            }
+        }
     } else {
-        printf("+ Error: Bid not possible\n");
-    }
+        printf("+ Error: Bid not possible\n"); //Puja negativa, lista vacía o item no existente.
 
-    printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n", item.consoleId, stackItem.bidder,
-        consoleBrand2String(item.consoleBrand), stackItem.consolePrice, item.bidCounter);
+    }
 }
 
 /**
@@ -356,7 +333,6 @@ void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
     tItemL item;//El item que se quiere adjudicar.
     tItemS top; //El item en la pila de pujas que guarda los datos de la mayor puja.
 
-    printf("********************\n");
     printf("%s A: console %s\n", commandNumber, consoleId_p);
 
     pos = findItem(consoleId_p, *list);
@@ -404,64 +380,62 @@ void processStatsCommand(char *commandNumber, tList list) {
     tItemL topItem;     //Auxiliar donde se guardará la consola con mayor puja.
     tItemS topStack;    //Auxiliar donde se guardará la mayor puja.
 
-    printf("********************\n");
     printf("%s S\n", commandNumber);
 
-    if (isEmptyList(list)) {
-        printf("+ Error: Stats not possible\n"); //La lista se encuentra vacía.
-        return;
-    }
+    if (!isEmptyList(list)) {
+        pos = first(list);
 
-    pos = first(list);
+        while (pos != LNULL) { /*Se atraviesa toda la lista hasta llegar al final para calcular # de consolas por marca,
+                                *y hacer el listing de todas en consola.
+                                */
+            tItemL item = getItem(pos, list); //El item guardado en la posición que estamos comprobando.
 
-    while (pos != LNULL) { /*Se atraviesa toda la lista hasta llegar al final para calcular # de consolas por marca,
-                            *y hacer el listing de todas en consola.
-                            */
-        tItemL item = getItem(pos, list); //El item guardado en la posición que estamos comprobando.
+            printf("Console %s seller %s brand %s price %.2f", item.consoleId, item.seller,
+                consoleBrand2String(item.consoleBrand), item.consolePrice);
 
-        printf("Console %s seller %s brand %s price %.2f", item.consoleId, item.seller,
-            consoleBrand2String(item.consoleBrand), item.consolePrice);
+            if (isEmptyStack(item.bidStack)) { //No se han creado pujas.
+                printf(". No bids\n");
+            } else {
+                topBid = peek(item.bidStack).consolePrice;
+                increase = ((topBid - item.consolePrice) / item.consolePrice) * 100.0f;
 
-        if (isEmptyStack(item.bidStack)) { //No se han creado pujas.
-            printf(". No bids\n");
-        } else {
-            topBid = peek(item.bidStack).consolePrice;
-            increase = ((topBid - item.consolePrice) / item.consolePrice) * 100.0f;
-
-            if (increase > maxIncrease) {
-                maxIncrease = increase;
-                topItemPos = pos;
+                if (increase > maxIncrease) {
+                    maxIncrease = increase;
+                    topItemPos = pos;
+                }
+                printf(" bids %d top bidder %s\n", item.bidCounter, peek(item.bidStack).bidder);
             }
-            printf(" bids %d top bidder %s\n", item.bidCounter, peek(item.bidStack).bidder);
+
+
+            if (item.consoleBrand == nintendo) { //Se aumenta el contador y el sumatorio.
+                countNintendo++;
+                sumNintendo += item.consolePrice;
+            } else if (item.consoleBrand == sega) {
+                countSega++;
+                sumSega += item.consolePrice;
+            }
+
+            pos = next(pos, list);
         }
 
+        avgNintendo = (countNintendo > 0) ? sumNintendo / (float)countNintendo : 0; //cálculo de promedio que evita div/0
+        avgSega = (countSega > 0) ? sumSega / (float)countSega : 0;                 //cálculo de promedio que evita div/0
 
-        if (item.consoleBrand == nintendo) { //Se aumenta el contador y el sumatorio.
-            countNintendo++;
-            sumNintendo += item.consolePrice;
-        } else if (item.consoleBrand == sega) {
-            countSega++;
-            sumSega += item.consolePrice;
+        printf("\nBrand     Consoles    Price  Average\n");
+        printf("Nintendo  %8d %8.2f %8.2f\n", countNintendo, sumNintendo, avgNintendo);
+        printf("Sega      %8d %8.2f %8.2f\n", countSega, sumSega, avgSega);
+
+        if (topItemPos != NULL) {
+            topItem = getItem(topItemPos, list);
+            topStack = peek(topItem.bidStack);
+            printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
+                topItem.consoleId, topItem.seller, consoleBrand2String(topItem.consoleBrand), topItem.consolePrice,
+                topStack.bidder, topStack.consolePrice, maxIncrease);
+        } else {
+            printf("Top bid not possible\n");
         }
-
-        pos = next(pos, list);
-    }
-
-    avgNintendo = (countNintendo > 0) ? sumNintendo / (float)countNintendo : 0; //cálculo de promedio que evita div/0
-    avgSega = (countSega > 0) ? sumSega / (float)countSega : 0;                 //cálculo de promedio que evita div/0
-
-    printf("\nBrand     Consoles    Price  Average\n");
-    printf("Nintendo  %8d %8.2f %8.2f\n", countNintendo, sumNintendo, avgNintendo);
-    printf("Sega      %8d %8.2f %8.2f\n", countSega, sumSega, avgSega);
-
-    if (topItemPos != NULL) {
-        topItem = getItem(topItemPos, list);
-        topStack = peek(topItem.bidStack);
-        printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
-            topItem.consoleId, topItem.seller, consoleBrand2String(topItem.consoleBrand), topItem.consolePrice,
-            topStack.bidder, topStack.consolePrice, maxIncrease);
     } else {
-        printf("Top bid not possible\n");
+        printf("+ Error: Stats not possible\n"); //La lista se encuentra vacía.
     }
 }
 
@@ -481,39 +455,37 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     tItemL item;              //El item que se quiere comprobar.
     tPosL nextPos;            //La posición siguiente al item que se quiere comprobar.
 
-    printf("********************\n");
     printf("%s R\n", commandNumber);
 
-    if (isEmptyList(*list)) {
-        printf("+ Error: Remove not possible\n");
-        return;
-    }
+    if (!isEmptyList(*list)) {
+        pos = first(*list);     //Llamamos a first después de comprobar que la lista no esté vacía, por la preCD.
 
-    pos = first(*list);     //Llamamos a first después de comprobar que la lista no esté vacía, por la preCD.
+        while (pos != LNULL) { /*Atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y
+                                *hacer el listing de todas en consola.
+                                */
+            item = getItem(pos, *list);
+            nextPos = next(pos, *list);
 
-    while (pos != LNULL) { /*Atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y
-                            *hacer el listing de todas en consola.
-                            */
-        item = getItem(pos, *list);
-        nextPos = next(pos, *list);
+            if (isEmptyStack(item.bidStack)) {
+                removed = true;
+                printf("Removing console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
+                    consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
 
-        if (isEmptyStack(item.bidStack)) {
-            removed = true;
-            printf("Removing console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
-                consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
+                handleDeleteConsole(pos, &item, list);
 
-            handleDeleteConsole(pos, &item, list);
-
-        } else { /*Al borrar un elemento de la lista, el nodo posterior pasa a ser el nodo eliminado. Si se invalidara
-                  * el penúltimo nodo, next daría bad access. Además, si se actualizase a next tras eliminar,
-                  * la siguiente consola no se eliminaría.
-                  */
-            pos = nextPos;
+            } else { /*Al borrar un elemento de la lista, el nodo posterior pasa a ser el nodo eliminado. Si se invalidara
+                      * el penúltimo nodo, next daría bad access. Además, si se actualizase a next tras eliminar,
+                      * la siguiente consola no se eliminaría.
+                      */
+                pos = nextPos;
+            }
         }
-    }
 
-    if (!removed) {
-        printf("+ Error: Remove not possible\n");
+        if (!removed) {
+            printf("+ Error: Remove not possible\n");
+        }
+    } else {
+        printf("+ Error: Remove not possible\n"); //lista vacía.
     }
 }
 
@@ -529,54 +501,52 @@ void processRemoveCommand(char *commandNumber, tList *list) {
  * @post Imprime "+ Error: InvalidateBids not possible" si la lista está vacía o no cumple condición.
  */
 void processInvalidateBidsCommand(char *commandNumber, tList *list) {
-    int totalBids = 0, numConsoles = 0; //Auxiliar de tipo contador.
+    int totalBids = 0, numConsoles = 0; //Auxiliar contador.
     tPosL pos;                          //Posición del elemento para el que se realizarán comprobaciones.
     float averageBids;                  //Promedio de las pujas.
     float range;                        //Rango de las pujas.
     bool invalidated = false;           //Auxiliar que lleva registro de si se ha invalidado alguna puja.
 
-    printf("********************\n");
     printf("%s I\n", commandNumber);
 
-    if (isEmptyList(*list)) {
-        printf("+ Error: InvalidateBids not possible\n");
-        return;
-    }
+    if (!isEmptyList(*list)) {
+        pos = first(*list);
 
-    pos = first(*list);
-
-    //Se atraviesa la lista para recoger los promedios.
-    while (pos != LNULL) {
-        tItemL item = getItem(pos, *list);
-        totalBids += item.bidCounter;
-        numConsoles++;
-        pos = next(pos, *list);
-    }
-
-    averageBids = (float)totalBids / (float)numConsoles;
-    range = 2 * averageBids;
-
-    pos = first(*list);
-
-    //Se atraviesa la lista y se eliminan las pujas si se supera el rango.
-    while (pos != LNULL) {
-        tItemL item = getItem(pos, *list);
-
-        if ((float)item.bidCounter > range) {
-            clearStack(&item.bidStack);
-
-            printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n", item.consoleId,
-                item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter, averageBids);
-            item.bidCounter = 0;
-            updateItem(item,pos,list);
-            invalidated = true;
+        //Se atraviesa la lista para recoger los promedios.
+        while (pos != LNULL) {
+            tItemL item = getItem(pos, *list);
+            totalBids += item.bidCounter;
+            numConsoles++;
+            pos = next(pos, *list);
         }
 
-        pos = next(pos, *list);
-    }
+        averageBids = (float)totalBids / (float)numConsoles;
+        range = 2 * averageBids;
 
-    if (!invalidated) {
-        printf("+ Error: InvalidateBids not possible\n"); //Ninguna consola fue invalidada.
+        pos = first(*list);
+
+        //Se atraviesa la lista y se eliminan las pujas si se supera el rango.
+        while (pos != LNULL) {
+            tItemL item = getItem(pos, *list);
+
+            if ((float)item.bidCounter > range) {
+                clearStack(&item.bidStack);
+
+                printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n", item.consoleId,
+                    item.seller, consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter, averageBids);
+                item.bidCounter = 0;
+                updateItem(item,pos,list);
+                invalidated = true;
+            }
+
+            pos = next(pos, *list);
+        }
+
+        if (!invalidated) {
+            printf("+ Error: InvalidateBids not possible\n"); //Ninguna consola fue invalidada.
+        }
+    } else {
+        printf("+ Error: InvalidateBids not possible\n"); //lista vacía.
     }
 }
 
@@ -599,6 +569,7 @@ void processInvalidateBidsCommand(char *commandNumber, tList *list) {
  * @note Función proporcionada por la universidad, modificada ligeramente.
  */
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *list) {
+    printf("********************\n");
     switch (command) {
         case 'N':
             processNewCommand(commandNumber, param1, param2, param3, param4, list);
