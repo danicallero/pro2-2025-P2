@@ -1,9 +1,9 @@
-/*
- * TITLE: PROGRAMMING II LABS
- * SUBTITLE: Practical 2
- * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * GROUP: 3.3
- * DATE: 25 / 03 / 25
+/**
+ * @file console_list.h
+ * @brief Gestión del TAD Lista dinámica ordenada de consolas.
+ * @date 25/03/2025
+ *
+ * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
  */
 
 #ifndef CONSOLE_LIST_H
@@ -13,13 +13,6 @@
 #include "bid_stack.h"
 #include <stdbool.h>
 #include <stdlib.h>
-
-/**
- * @file console_list.h
- * @brief Gestión del TAD Lista dinámica ordenada de consolas.
- *
- * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
- */
 
 /**
  *@brief Valor fijo para una posición de la tList nula.

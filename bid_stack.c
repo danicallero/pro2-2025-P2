@@ -1,9 +1,9 @@
-/*
-* TITLE: PROGRAMMING II LABS
- * SUBTITLE: Practical 2
- * AUTHOR 1: Daniel Callero Costales LOGIN 1: daniel.callero@udc.es
- * GROUP: 3.3
- * DATE: 25 / 03 / 25
+/**
+ * @file bid_stack.c
+ * @brief Gestion del TAD pila estática de pujas.
+ * @date 25/03/2025
+ *
+ * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
  */
 
 #include "bid_stack.h"
