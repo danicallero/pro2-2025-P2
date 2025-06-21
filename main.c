@@ -16,20 +16,7 @@
  * @file main.c
  * @brief Gestión de plataforma de pujas de consolas.
  *
- * @note
- * Esta práctica está comentada en formato Doxygen (/** ... * /), pero se puede ignorar si no se utiliza un IDE con
- * soporte o no se tiene Doxygen instalado.
- */
-
-/*
- * Como guía rápida en caso de no conocer la notación doxygen:
- * @brief:          Breve descripción de la función.
- * @param:          Parámetros: [in] (entrada), [out] (salida), [in,out] (entrada y salida).
- * @return/retval:  Valor devuelto (si existe).
- * @pre:            Precondiciones necesarias antes de ejecutar la función.
- * @post:           Cambios garantizados después de la ejecución.
- * @attention:      Avisos importantes sobre el uso de la función.
- * @remark/note:    Información adicional relevante.
+ * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
  */
 
 /**
