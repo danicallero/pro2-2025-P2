@@ -118,7 +118,6 @@ void clearStack(tStack *stack) {
  * pujas previamente.
  *
  * @param[in] pos Posición tPosL del elemento que se quiere eliminar.
- * @param[in,out] item Puntero al tItemL que se encuentra en la tPosL 'pos'.
  * @param[in,out] list Puntero a la lista en la que se encuentra el item.
  *
  * @pre - 'list' debe apuntar a una tList inicializada.
@@ -128,10 +127,13 @@ void clearStack(tStack *stack) {
  * @post - La pila de pujas del elemento 'item' queda vaciada.
  * @post - El elemento 'item' se elimina de la lista, y como consecuencia otros elementos pueden haber sido desplazados.
  */
-void handleDeleteConsole(tPosL pos, tItemL *item, tList *list) {
-    clearStack(&item->bidStack);
-    updateItem(*item, pos, list); //Actualizamos el item con la pila borrada.
+void handleDeleteConsole(tPosL pos, tList *list) {
+    tItemL item = getItem(pos, *list);
+    clearStack(&item.bidStack);
+    item.bidCounter = 0;
+    updateItem(item, pos, list); //Actualizamos el item con la pila borrada.
     deleteAtPosition(pos, list);
+    //pos = LNULL;
 }
 
 /**
@@ -238,16 +240,20 @@ void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
 
     printf("%s D: console %s\n", commandNumber, consoleId_p);
 
-    pos = findItem(consoleId_p, *list); //También actúa como isEmptyList si devuelve LNULL.
-    if (pos != LNULL) {
-        item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
+    if (consoleId_p != NULL) {
+        pos = findItem(consoleId_p, *list); //También actúa como isEmptyList si devuelve LNULL.
+        if (pos != LNULL) {
+            item = getItem(pos,*list); //Se duplica antes de borrar para poder hacer el print.
 
-        printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
-            consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
+            printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
+                consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
 
-        handleDeleteConsole(pos, &item, list);
+            handleDeleteConsole(pos, list);
+        } else {
+            printf("+ Error: Delete not possible\n"); //No se ha encontrado item o la lista se encuentra vacía.
+        }
     } else {
-        printf("+ Error: Delete not possible\n"); //No se ha encontrado item o la lista se encuentra vacía.
+        printf("+ Error: Delete not possible\n"); //missing params
     }
 }
 
@@ -335,20 +341,23 @@ void processAwardCommand(char *commandNumber, char *consoleId_p, tList *list ) {
 
     printf("%s A: console %s\n", commandNumber, consoleId_p);
 
-    pos = findItem(consoleId_p, *list);
-    if (pos == LNULL) { //No se ha encontrado el item o la lista está vacía.
-        printf("+ Error: Award not possible\n");
-        return;
-    }
-
-    item = getItem(pos, *list);
-    if (isEmptyStack(item.bidStack)) { //No se han encontrado pujas.
-        printf("+ Error: Award not possible\n");
+    if (consoleId_p != NULL) {
+        pos = findItem(consoleId_p, *list);
+        if (pos != LNULL) {
+            item = getItem(pos, *list);
+            if (isEmptyStack(item.bidStack)) { //No se han encontrado pujas.
+                printf("+ Error: Award not possible\n");
+            } else {
+                top = peek(item.bidStack);
+                printf("* Award: console %s bidder %s brand %s price %.2f\n", item.consoleId, top.bidder,
+                    consoleBrand2String(item.consoleBrand) ,top.consolePrice);
+                handleDeleteConsole(pos, list);
+            }
+        } else {
+            printf("+ Error: Award not possible\n"); //No se ha encontrado el item o la lista está vacía.
+        }
     } else {
-        top = peek(item.bidStack);
-        printf("* Award: console %s bidder %s brand %s price %.2f\n", item.consoleId, top.bidder,
-            consoleBrand2String(item.consoleBrand) ,top.consolePrice);
-        handleDeleteConsole(pos, &item, list);
+        printf("+ Error: Award not possible\n"); //Missing params
     }
 }
 
@@ -453,31 +462,25 @@ void processRemoveCommand(char *commandNumber, tList *list) {
     bool removed = false;     //Auxiliar que lleva registro de si se ha eliminado alguna consola.
     tPosL pos;                //Posición del elemento para el que se realizarán comprobaciones.
     tItemL item;              //El item que se quiere comprobar.
-    tPosL nextPos;            //La posición siguiente al item que se quiere comprobar.
 
     printf("%s R\n", commandNumber);
 
     if (!isEmptyList(*list)) {
         pos = first(*list);     //Llamamos a first después de comprobar que la lista no esté vacía, por la preCD.
 
-        while (pos != LNULL) { /*Atravesamos toda la lista hasta llegar al final para calcular # de consolas por marca, y
-                                *hacer el listing de todas en consola.
-                                */
+        while (pos != LNULL) {
             item = getItem(pos, *list);
-            nextPos = next(pos, *list);
 
             if (isEmptyStack(item.bidStack)) {
                 removed = true;
                 printf("Removing console %s seller %s brand %s price %.2f bids %d\n", item.consoleId, item.seller,
                     consoleBrand2String(item.consoleBrand), item.consolePrice, item.bidCounter);
 
-                handleDeleteConsole(pos, &item, list);
-
-            } else { /*Al borrar un elemento de la lista, el nodo posterior pasa a ser el nodo eliminado. Si se invalidara
-                      * el penúltimo nodo, next daría bad access. Además, si se actualizase a next tras eliminar,
-                      * la siguiente consola no se eliminaría.
-                      */
-                pos = nextPos;
+                handleDeleteConsole(pos, list);
+                pos = first(*list);//No es elegante, no es bonito, y no me gusta, pero como me han obligado a usar aliasing
+                                   //para eliminaciones, es la forma que se me ocurre de asegurar integridad
+            } else {
+                pos = next(pos, *list);
             }
         }
 
