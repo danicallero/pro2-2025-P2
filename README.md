@@ -8,9 +8,9 @@ El sistema permite registrar consolas, gestionar pujas, adjudicar ventas y gener
 > 
 >Este proyecto se comparte con el propósito de ayudar a otros a estudiantes a entender los contenidos de la materia, y para que tengan una idea de cómo se ve una práctica que está aprobada (no está perfecta).
 > 
->Usar fragmentos de este código –o cualquier otro– en una entrega como creación propia es considerado **fraude académico**, y conllevará el suspenso de la asignatura en **las DOS convocatorias**. [Normativa UDC](https://www.udc.es/es/normativa/academica/)
+>Usar fragmentos de este código –o cualquier otro– en una entrega propia es considerado **fraude académico**, y conllevará el suspenso de la asignatura ==las DOS convocatorias==. [Normativa UDC](https://www.udc.es/es/normativa/academica/)
 > 
->Los profesores del departamento no nacieron ayer, evidentemente utilizan software como [MOSS](https://theory.stanford.edu/~aiken/moss/) para detectar plagio entre compañeros, y muy probablemente algún tipo de detección de IA ¡No te la juegues!
+>Existen herramientas como [MOSS](https://theory.stanford.edu/~aiken/moss/) para detectar plagio entre compañeros, y también de detección de IA ¡No te la juegues!
 > 
 >Por favor, usa este contenido de forma responsable.
 
