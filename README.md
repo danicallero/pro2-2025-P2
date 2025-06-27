@@ -24,7 +24,7 @@ El sistema permite registrar consolas, gestionar pujas, adjudicar ventas y gener
 ## Estructuras de datos
 
 - **Lista dinámica ordenada (`tList`)**: Almacena las consolas activas, ordenadas alfabéticamente por su identificador.
-- [[Pilas Estáticas|Pila estática]] (`tStack`)**: Mantiene el historial de pujas de cada consola individualmente.
+- **[[Pilas Estáticas|Pila estática]] (`tStack`)**: Mantiene el historial de pujas de cada consola individualmente.
 
 ## Comandos soportados
 
@@ -202,6 +202,19 @@ Salida esperada:
 - **bid_stack.c/.h**: Definición e implementación de la [[Pilas Estáticas|pila estática]] de pujas.
 - **types.c**: Definición de tipos.
 
+- **script_macOS.sh**: Script de prueba modificado para ejecutarse fuera de la máquina remota de la UDC.
+
+## Entorno de Desarrollo
+
+Este programa fue desarrollado y probado en las siguientes condiciones:
+- Sistema operativo: macOS Sequoia 15.X
+- Arquitectura: Apple Sillicon serie M4 (ARM64)
+- Estándar: C99
+- Compilador: GCC
+```shell
+brew install gcc
+```
+
 ## Compilación y Ejecución
 
 Para la compilación de la práctica, se recomienda usar el compilador **gcc**, que es el que se usará para la corrección.
@@ -223,6 +236,66 @@ Para ejecutar el programa con un fichero de comandos, ejecuta en la terminal el 
 ```
 
 Al ejecutar el archivo se mostrará en la terminal el resultado de la ejecución del código.
+
+## Script de prueba
+
+Se incluye un script de prueba (`run_test.sh`) que automatiza la compilación y verificación de las operaciones y pruebas de los TADs del proyecto.  Este script ha sido probado en la terminal de macOS, pero debería funcionar en cualquier terminal Unix.
+
+> Este script está inspirado en el proporcionado para el seguimiento de entregas parciales y comprobación de funcionalidades básicas. Sin embargo, se ha desarrollado de forma independiente con el propósito de ejecutar un número variable de comandos y registrar todas las salidas en archivos separados. Por respeto a las restricciones aplicables a la hora de compartir contenido sujeto a derechos de autor, el código original no puede ser compartido; por ello, esta versión mantiene la funcionalidad esencial adaptada a un entorno flexible y personalizado para la ejecución de pruebas.
+
+### Funcionalidades
+
+- Compila el programa principal (`main`) y los test de los TADs (`test_bid_stack` y `test_console_list`).
+- Ejecuta las pruebas de los comandos leyendo los archivos `.txt` en `commands/`.
+- Ejecuta las pruebas de los TADs correspondientes en `adt_test/`.
+- Compara la salida generada con los archivos de referencia en `references/`.
+- Muestra resultados resumidos con indicación clara de `OK`, `FAIL` o `NOREF` (referencia faltante).
+- Opción `-v` para mostrar las diferencias entre la salida y la referencia en caso de fallo.
+- Opción `-p <main|test>` para elegir el tipo de pruebas a ejecutar (programa principal o tests de TADs).
+- Si no se especifica, ejecuta ambos en orden: primero los tests de los TADs y luego el programa principal.
+
+### Uso
+
+```shell
+./run_test.sh                 # Ejecuta todas las pruebas
+./run_test.sh -p main         # Solo pruebas del programa principal
+./run_test.sh -p test         # Solo pruebas de TADs
+./run_test.sh -p main -v      # Pruebas principales con salida detallada en caso de fallo
+```
+### Ejemplo de salida
+```
+dani@MacBook-Pro-Dani P2 % ./run_test.sh
+
+$==============================$
+    Running tests for: test
+$==============================$
+Compiling test program for bid_stack
+Compiling test program for console_list
+
+Checking test program output...
+
+Executable                          Result  Notes
+test_bid_stack                      OK
+test_console_list                   OK
+
+
+$==============================$
+    Running tests for: main
+$==============================$
+Compiling main program
+
+Checking main program output...
+
+Input file                          Result  Notes
+commands/award.txt                  OK
+commands/bid.txt                    OK
+commands/delete.txt                 OK
+commands/invalidate.txt             OK
+commands/new.txt                    OK
+commands/remove.txt                 OK
+dani@MacBook-Pro-Dani P2 % 
+```
+
 ## Consideraciones
 
 - El tamaño máximo de la pila está limitado por `SMAX`.

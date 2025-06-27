@@ -1,0 +1,17 @@
+Stack: empty
+Populating stack...
+Stack: top -> luis (12.00)
+Stack: top -> marta (25.00)
+Stack: top -> erik (33.00)
+
+Popping: erik
+Stack: top -> marta (25.00)
+Pushing: sofia
+Stack: top -> sofia (41.00)
+Stack: top -> marta (25.00)
+Stack: top -> luis (12.00)
+Stack: empty
+Pushing: alex
+Stack: top -> alex (55.00)
+Popping: alex
+Stack: empty

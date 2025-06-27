@@ -133,7 +133,6 @@ void handleDeleteConsole(tPosL pos, tList *list) {
     item.bidCounter = 0;
     updateItem(item, pos, list); //Actualizamos el item con la pila borrada.
     deleteAtPosition(pos, list);
-    //pos = LNULL;
 }
 
 /**
@@ -233,7 +232,6 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
  * @post Se imprime el resultado y se modifica la lista si el comando es válido.
  * @post Imprime "+ Error: Delete not possible" si el elemento no se encuentra.
  */
-
 void processDeleteCommand(char *commandNumber, char *consoleId_p, tList *list) {
     tPosL pos;   //Posición del item sobre el que se puja.
     tItemL item; //Item que se elimina.
@@ -615,7 +613,6 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
  *
  * @note Función proporcionada por la universidad, modificada ligeramente.
  */
-
 void readTasks(char *filename, tList *list) {
 
     FILE *f = NULL;
