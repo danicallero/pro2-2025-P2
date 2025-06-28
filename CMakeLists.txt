@@ -8,22 +8,20 @@ include(config.cmake)
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(warnings -Wall -Wextra)
 
+# Compilar bid_stack como librería estática
+add_library(bid_stack STATIC bid_stack.c bid_stack.h)
 
-set(dependencies_stack bid_stack.h bid_stack.c)
-add_executable(test_bid_stack types.h test_bid_stack.c ${dependencies_stack})
-target_compile_options(test_bid_stack PRIVATE ${warnings})
+# Compilar console_list como librería estática
+add_library(console_list STATIC console_list.c console_list.h)
 
-
-set(dependencies_list console_list.h console_list.c)
-add_executable(test_console_list types.h test_console_list.c ${dependencies_list})
-target_compile_options(test_console_list PRIVATE ${warnings})
-
-
+# main: necesita main.c, types.h y ambas librerías
 add_definitions(-DINPUT_FILE="${input}")
-add_executable(main main.c types.h ${dependencies_list} ${dependencies_stack})
+add_executable(main main.c types.h)
 target_compile_options(main PRIVATE ${warnings})
+target_link_libraries(main console_list bid_stack)
 
+# Añadimos el subdirectorio adt_test si tienes tests extra allí
+add_subdirectory(adt_test)
 
+# Salida de binarios en ../bin
 set_target_properties(main test_console_list test_bid_stack PROPERTIES RUNTIME_OUTPUT_DIRECTORY ../bin)
-
-

@@ -37,7 +37,7 @@ while getopts "p:v" opt; do
 done
 
 # aseguramos que existen las carpetas de salida, si no las creamos
-mkdir -p outputs adt_test
+mkdir -p outputs adt_test bin
 
 # si no hay -p... ejecutamos las dos pruebas
 if [ -z "$MAIN_NAME" ]; then
@@ -67,8 +67,8 @@ if [ "$MAIN_NAME" = "test" ]; then
     for i in "${!test_files[@]}"; do
         exe="./adt_test/${test_files[$i]}"
         ref="${test_refs[$i]}"
-        out="adt_test/${test_files[$i]}_out.txt"
-        diff_out="adt_test/${test_files[$i]}_diff.txt"
+        out="outputs/${test_files[$i]}_out.txt"
+        diff_out="bin/${test_files[$i]}_diff.txt"
 
         if [ ! -x "$exe" ]; then
             printf "%-35s ${ROJO}FAIL${RESET}     Not compiled\n" "${test_files[$i]}"
@@ -113,7 +113,7 @@ else
         base=$(basename "$f" .txt)
         out_file="outputs/${base}_out.txt"
         ref_file="references/${base}_ref.txt"
-        diff_out="outputs/${base}_diff.txt"
+        diff_out="bin/${base}_diff.txt"
 
         ./main "$f" > "$out_file"
 
