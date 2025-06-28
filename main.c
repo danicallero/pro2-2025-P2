@@ -2,6 +2,7 @@
  * @file main.c
  * @brief Gestión de plataforma de pujas de consolas.
  * @date 26/03/2025
+ * @author Daniel Callero Costales hola@danicallero.es
  *
  * @note Proyecto compartido con fines educativos. Se desaconseja la entrega propia o con fines de plagio.
  */
@@ -93,7 +94,7 @@ float safeStr2float(const char *str) {
     const float value = strtof(str, &endptr); //Valor convertido a float.
 
     if (*endptr != '\0') {
-        printf("Error: Invalid number format: %s\n", str);
+        //printf("Error: Invalid number format: %s\n", str);
         return -1.0f; //Se define un valor negativo para esta aplicación, los precios negativos no existen.
     }
     return value;
@@ -186,16 +187,18 @@ void processNewCommand(char *commandNumber, char *consoleId_p, char *sellerId_p,
     tConsoleBrand brand; //Variable donde se guarda la conversión de string a enum.
     float priceFloat; //Variable precio transformado a float para poder pasarlo al TAD.
 
+
     //Se asegura que el código no se rompa si faltan parámetros.
     if (!consoleId_p || !sellerId_p || !consoleBrand_p || !consolePrice_p || !list) {
-        printf("%s N\n+ Error: New not possible\n", commandNumber);
+        printf("%s N: console %s seller %s brand %s price %s\n", commandNumber, consoleId_p, sellerId_p, consoleBrand_p,
+            consolePrice_p);
+        printf("+ Error: New not possible\n");
         return;
     }
     priceFloat = safeStr2float(consolePrice_p);
 
     printf("%s N: console %s seller %s brand %s price %.2f\n", commandNumber, consoleId_p, sellerId_p, consoleBrand_p,
            priceFloat);
-
 
     pos = findItem(consoleId_p, *list);
     if (pos == LNULL && priceFloat >= 0) {
@@ -276,15 +279,15 @@ void processBidCommand(char *commandNumber, char *consoleId_p, char *bidderId_p,
     char *highestBidStr;//String del mayor pujador (si no hay pujas será el vendedor).
     float bidPrice;     //Variable precio como float para poder pasarlo al TAD y hacer comparaciones.
 
+    printf("%s B: console %s bidder %s price %s\n", commandNumber, consoleId_p, bidderId_p, consolePrice_p);
+
     //Se asegura que el código no se rompa si faltan parámetros.
     if (!bidderId_p || !consolePrice_p || !list) {
-        printf("%s B\n+ Error: Bid not possible\n", commandNumber);
+        printf("+ Error: Bid not possible\n");
         return;
     }
     bidPrice = safeStr2float(consolePrice_p);
     pos = findItem(consoleId_p, *list);
-
-    printf("%s B: console %s bidder %s price %.2f\n", commandNumber, consoleId_p, bidderId_p, bidPrice);
 
     if (bidPrice >= 0 && pos != LNULL) {
         item = getItem(pos, *list);
