@@ -1,0 +1,40 @@
+01 A
+02 A console10
+03 B
+04 B console10 bidder1 145.00
+05 S
+06 R
+07 I
+08 A
+09 D
+10 N
+11 N consola seller sega 100.00
+12 N console1 seller1 sega 100.00 extra_param
+13 N console2 seller2 sega ""
+14 S 1 2 3
+15 B console999 bidder1 100.00
+16 A console999
+17 D console999
+18 S 1 2 3
+19 B console1  100.00
+20 B console1 seller1 seller1 100.00
+21 B console1 bidder inf
+22 A console1 seller1
+23 D console1 seller1
+24 I extra_param
+25 R garbage
+26 S extra
+27 B
+28 N console3 seller sony 1
+29 A
+30 I
+31 R
+32 S
+33 N console1 seller1 sega -50.00
+34 B console1 bidder1 precio
+35 B console1 bidder1
+36 N console1 seller1 sega
+37 N "" "" "" ""
+38 B console1 " " 100.00
+39 A console1 seller1 seller1
+40 D console1 seller1 seller1 seller1

@@ -1,0 +1,21 @@
+********************
+01 N: console (null) seller (null) brand (null) price (null)
++ Error: New not possible
+********************
+02 D: console (null)
++ Error: Delete not possible
+********************
+03 B: console (null) bidder (null) price (null)
++ Error: Bid not possible
+********************
+04 A: console (null)
++ Error: Award not possible
+********************
+05 R
++ Error: Remove not possible
+********************
+06 S
++ Error: Stats not possible
+********************
+07 I
++ Error: InvalidateBids not possible
