@@ -57,9 +57,17 @@ echo "$==============================$"
 if [ "$MAIN_NAME" = "test" ]; then
     echo -e "${AMARILLO}Compiling test program for bid_stack${RESET}"
     gcc -Wall -Wextra -I. -I.. bid_stack.c adt_test/test_bid_stack.c -o adt_test/test_bid_stack
+    if [ $? -ne 0 ]; then
+        echo -e "${ROJO}Compilation failed for test_bid_stack${RESET}"
+        rm -f adt_test/test_bid_stack
+    fi
 
     echo -e "${AMARILLO}Compiling test program for console_list${RESET}"
     gcc -Wall -Wextra -I. -I.. console_list.c adt_test/test_console_list.c -o adt_test/test_console_list
+    if [ $? -ne 0 ]; then
+        echo -e "${ROJO}Compilation failed for test_console_list${RESET}"
+        rm -f adt_test/test_console_list
+    fi
 
     echo -e "\n${SUBR}Checking test program output...${RESET}\n"
     printf "${SUBR}Executable${RESET}                          ${SUBR}Result${RESET}  ${SUBR}Notes${RESET}\n"
@@ -100,9 +108,9 @@ if [ "$MAIN_NAME" = "test" ]; then
 else
     echo -e "${AMARILLO}Compiling main program${RESET}"
     gcc -Wall -Wextra main.c bid_stack.c console_list.c -o main
-
-    if [ ! -x ./main ]; then
+    if [ $? -ne 0 ]; then
         echo -e "${ROJO}Main compilation failed${RESET}\n"
+        rm -f ./main
         exit 1
     fi
 
