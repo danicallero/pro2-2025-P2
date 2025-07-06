@@ -43,7 +43,7 @@ Cada comando sigue un formato específico y puede generar errores si las condici
 ### `New`
 Formato:
 ```plaintext
-New <númeroDeComando> <ConsoleID> <vendedor> <marca> <precio>
+<númeroDeComando> N <ConsoleID> <vendedor> <marca> <precio>
 ```
 Errores comunes:
 - ID duplicado.
@@ -63,7 +63,7 @@ Salida esperada:
 ### `Delete`
 Formato:
 ```plaintext
-Delete <númeroDeComando> <ConsoleID>
+<númeroDeComando> D <ConsoleID>
 ```
 Errores comunes:
 - ID no encontrado.
@@ -82,7 +82,7 @@ Salida esperada:
 ### `Bid`
 Formato:
 ```plaintext
-Bid <númeroDeComando> <ConsoleID> <postor> <nuevoPrecio>
+<númeroDeComando> B <ConsoleID> <postor> <nuevoPrecio>
 ```
 Errores comunes:
 - Precio menor al actual.
@@ -113,7 +113,7 @@ Salida esperada:
 ### `Award`
 Formato:
 ```plaintext
-Award <númeroDeComando> <ConsoleID>
+<númeroDeComando> A <ConsoleID>
 ```
 Errores comunes:
 - ID inexistente.
@@ -133,7 +133,7 @@ Salida esperada:
 ### `Stats`
 Formato:
 ```plaintext
-Stats <númeroDeComando>
+<númeroDeComando> S
 ```
 Errores comunes:
 - Lista vacía.
@@ -158,7 +158,7 @@ Top bid: console console2 seller seller2 brand nintendo price 120.00 bidder bidd
 ### `Remove`
 Formato:
 ```plaintext
-Remove <númeroDeComando>
+<númeroDeComando> R
 ```
 Errores comunes:
 - Lista vacía.
@@ -178,7 +178,7 @@ Removing console console1 seller seller1 brand sega price 150.00 bids 0
 ### `InvalidateBids`
 Formato:
 ```plaintext
-InvalidateBids <númeroDeComando>
+<númeroDeComando> I
 ```
 Errores comunes:
 - Lista vacía.
